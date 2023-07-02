@@ -30,14 +30,25 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
 
-        <TextBlock Grid.Row="1" Grid.Column="0" Text="8" />
-        <TextBlock Grid.Row="2" Grid.Column="0" Text="7" />
-        <TextBlock Grid.Row="3" Grid.Column="0" Text="6" />
-        <TextBlock Grid.Row="4" Grid.Column="0" Text="5" />
-        <TextBlock Grid.Row="5" Grid.Column="0" Text="4" />
-        <TextBlock Grid.Row="6" Grid.Column="0" Text="3" />
-        <TextBlock Grid.Row="7" Grid.Column="0" Text="2" />
-        <TextBlock Grid.Row="8" Grid.Column="0" Text="1" />
+        <TextBlock Grid.Row="1" Grid.Column="0" Text="8" TextAlignment="Center" VerticalAlignment="Center"/>
+        <TextBlock Grid.Row="2" Grid.Column="0" Text="7" TextAlignment="Center" VerticalAlignment="Center"/>
+        <TextBlock Grid.Row="3" Grid.Column="0" Text="6" TextAlignment="Center" VerticalAlignment="Center"/>
+        <TextBlock Grid.Row="4" Grid.Column="0" Text="5" TextAlignment="Center" VerticalAlignment="Center"/>
+        <TextBlock Grid.Row="5" Grid.Column="0" Text="4" TextAlignment="Center" VerticalAlignment="Center"/>
+        <TextBlock Grid.Row="6" Grid.Column="0" Text="3" TextAlignment="Center" VerticalAlignment="Center"/>
+        <TextBlock Grid.Row="7" Grid.Column="0" Text="2" TextAlignment="Center" VerticalAlignment="Center"/>
+        <TextBlock Grid.Row="8" Grid.Column="0" Text="1" TextAlignment="Center" VerticalAlignment="Center"/>
+
+        <Button Grid.Row="0" Grid.Column="0" Content="X" Background="Red"/>
+
+        <TextBlock Grid.Row="0" Grid.Column="1" Text="a" TextAlignment="Center"/>
+        <TextBlock Grid.Row="0" Grid.Column="2" Text="b" TextAlignment="Center"/>
+        <TextBlock Grid.Row="0" Grid.Column="3" Text="c" TextAlignment="Center"/>
+        <TextBlock Grid.Row="0" Grid.Column="4" Text="d" TextAlignment="Center"/>
+        <TextBlock Grid.Row="0" Grid.Column="5" Text="e" TextAlignment="Center"/>
+        <TextBlock Grid.Row="0" Grid.Column="6" Text="f" TextAlignment="Center"/>
+        <TextBlock Grid.Row="0" Grid.Column="7" Text="g" TextAlignment="Center"/>
+        <TextBlock Grid.Row="0" Grid.Column="8" Text="h" TextAlignment="Center"/>
 
 
     </Grid>
