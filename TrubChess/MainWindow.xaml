@@ -68,5 +68,24 @@
         <Image Source="/Resources/whitepawn.png" Grid.Row="7" Grid.Column="7"/>
         <Image Source="/Resources/whitepawn.png" Grid.Row="7" Grid.Column="8"/>
 
+        <Image Source="/Resources/blackrook.png" Grid.Row="1" Grid.Column="1"/>
+        <Image Source="/Resources/blackknightl.png" Grid.Row="1" Grid.Column="2"/>
+        <Image Source="/Resources/blackbishopl.png" Grid.Row="1" Grid.Column="3"/>
+        <Image Source="/Resources/blackqueen.png" Grid.Row="1" Grid.Column="4"/>
+        <Image Source="/Resources/blackking.png" Grid.Row="1" Grid.Column="5"/>
+        <Image Source="/Resources/blackbishopr.png" Grid.Row="1" Grid.Column="6"/>
+        <Image Source="/Resources/blackknightr.png" Grid.Row="1" Grid.Column="7"/>
+        <Image Source="/Resources/blackrook.png" Grid.Row="1" Grid.Column="8"/>
+
+        <Image Source="/Resources/whiterook.png" Grid.Row="8" Grid.Column="1"/>
+        <Image Source="/Resources/whiteknightl.png" Grid.Row="8" Grid.Column="2"/>
+        <Image Source="/Resources/whitebishopl.png" Grid.Row="8" Grid.Column="3"/>
+        <Image Source="/Resources/whitequeen.png" Grid.Row="8" Grid.Column="4"/>
+        <Image Source="/Resources/whiteking.png" Grid.Row="8" Grid.Column="5"/>
+        <Image Source="/Resources/whitebishopr.png" Grid.Row="8" Grid.Column="6"/>
+        <Image Source="/Resources/whiteknightr.png" Grid.Row="8" Grid.Column="7"/>
+        <Image Source="/Resources/whiterook.png" Grid.Row="8" Grid.Column="8"/>
+        
+
     </Grid>
 </Window>

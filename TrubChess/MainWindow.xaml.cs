@@ -23,6 +23,12 @@ namespace TrubChess
         public MainWindow()
         {
             InitializeComponent();
+            ColorBg();
+        }
+
+        private void ColorBg()
+        {
+            throw new NotImplementedException();
         }
     }
 }
