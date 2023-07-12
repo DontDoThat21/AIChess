@@ -27,6 +27,11 @@ namespace TrubChess
             SetChessPiecesUp();
         }
 
+        private void SetChessPiecesUp()
+        {
+            throw new NotImplementedException();
+        }
+
         private void ColorBg()
         {
             for (int c = 1; c < ChessBoard.ColumnDefinitions.Count; c++)
