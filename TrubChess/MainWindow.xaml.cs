@@ -24,11 +24,29 @@ namespace TrubChess
         {
             InitializeComponent();
             ColorBg();
+            SetChessPiecesUp();
         }
 
         private void ColorBg()
         {
-            throw new NotImplementedException();
+            for (int c = 1; c < ChessBoard.ColumnDefinitions.Count; c++)
+            {
+                for (int r = 1; r < ChessBoard.RowDefinitions.Count; r++)
+                {
+                    var cell = new Border
+                    { 
+                        Background = Brushes.AliceBlue
+                    };
+                    var textTest = new TextBlock
+                    {
+                        Text = $"c:{c} r: {r}"
+                    };
+                    cell.Child = textTest;
+                    Grid.SetRow(cell, r);
+                    Grid.SetColumn(cell, c);
+                    ChessBoard.Children.Add(cell);
+                }
+            }
         }
     }
 }
