@@ -1,0 +1,11 @@
+<Window x:Class="TrubChess.Dialogs.PawnPromotionDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Pawn Promotion" Height="150" Width="300" WindowStartupLocation="CenterOwner" ResizeMode="NoResize">
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10">
+        <Button Name="QueenButton" Content="Queen" Width="60" Margin="5" Click="Promotion_Click"/>
+        <Button Name="RookButton" Content="Rook" Width="60" Margin="5" Click="Promotion_Click"/>
+        <Button Name="BishopButton" Content="Bishop" Width="60" Margin="5" Click="Promotion_Click"/>
+        <Button Name="KnightButton" Content="Knight" Width="60" Margin="5" Click="Promotion_Click"/>
+    </StackPanel>
+</Window>

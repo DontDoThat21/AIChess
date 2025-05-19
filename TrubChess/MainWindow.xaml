@@ -5,87 +5,158 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TrubChess"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid x:Name="ChessBoard">
+        Title="TrubChess" Height="700" Width="900">
+    <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="25"/>
-            <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="25"/>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-        </Grid.ColumnDefinitions>
 
-        <TextBlock Grid.Row="1" Grid.Column="0" Text="8" TextAlignment="Center" VerticalAlignment="Center"/>
-        <TextBlock Grid.Row="2" Grid.Column="0" Text="7" TextAlignment="Center" VerticalAlignment="Center"/>
-        <TextBlock Grid.Row="3" Grid.Column="0" Text="6" TextAlignment="Center" VerticalAlignment="Center"/>
-        <TextBlock Grid.Row="4" Grid.Column="0" Text="5" TextAlignment="Center" VerticalAlignment="Center"/>
-        <TextBlock Grid.Row="5" Grid.Column="0" Text="4" TextAlignment="Center" VerticalAlignment="Center"/>
-        <TextBlock Grid.Row="6" Grid.Column="0" Text="3" TextAlignment="Center" VerticalAlignment="Center"/>
-        <TextBlock Grid.Row="7" Grid.Column="0" Text="2" TextAlignment="Center" VerticalAlignment="Center"/>
-        <TextBlock Grid.Row="8" Grid.Column="0" Text="1" TextAlignment="Center" VerticalAlignment="Center"/>
+        <!-- Top Menu -->
+        <Menu Grid.Row="0">
+            <MenuItem Header="Game">
+                <MenuItem Header="New Game" Click="NewGame_Click"/>
+                <MenuItem Header="Exit" Click="Exit_Click"/>
+            </MenuItem>
+            <MenuItem Header="Options">
+                <MenuItem Header="Game Mode">
+                    <MenuItem Header="Player vs Player" Click="PlayerVsPlayer_Click" IsCheckable="True" IsChecked="True" Name="PlayerVsPlayerMenuItem"/>
+                    <MenuItem Header="Player vs Computer" Click="PlayerVsComputer_Click" IsCheckable="True" Name="PlayerVsComputerMenuItem"/>
+                </MenuItem>
+                <MenuItem Header="AI Difficulty" Name="AIDifficultyMenu" IsEnabled="False">
+                    <MenuItem Header="Easy" Click="AIEasy_Click" IsCheckable="True" IsChecked="True" Name="AIEasyMenuItem"/>
+                    <MenuItem Header="Medium" Click="AIMedium_Click" IsCheckable="True" Name="AIMediumMenuItem"/>
+                    <MenuItem Header="Hard" Click="AIHard_Click" IsCheckable="True" Name="AIHardMenuItem"/>
+                </MenuItem>
+            </MenuItem>
+        </Menu>
 
-        <Button Grid.Row="0" Grid.Column="0" Content="X" Background="Red"/>
+        <!-- Main Content -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="250"/>
+            </Grid.ColumnDefinitions>
 
-        <TextBlock Grid.Row="0" Grid.Column="1" Text="a" TextAlignment="Center"/>
-        <TextBlock Grid.Row="0" Grid.Column="2" Text="b" TextAlignment="Center"/>
-        <TextBlock Grid.Row="0" Grid.Column="3" Text="c" TextAlignment="Center"/>
-        <TextBlock Grid.Row="0" Grid.Column="4" Text="d" TextAlignment="Center"/>
-        <TextBlock Grid.Row="0" Grid.Column="5" Text="e" TextAlignment="Center"/>
-        <TextBlock Grid.Row="0" Grid.Column="6" Text="f" TextAlignment="Center"/>
-        <TextBlock Grid.Row="0" Grid.Column="7" Text="g" TextAlignment="Center"/>
-        <TextBlock Grid.Row="0" Grid.Column="8" Text="h" TextAlignment="Center"/>
+            <!-- Chess Board -->
+            <Grid x:Name="ChessBoard" Grid.Column="0" Margin="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="25"/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="25"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
 
-        <Image Source="/Resources/blackpawn.png" Grid.Row="2" Grid.Column="1"/>
-        <Image Source="/Resources/blackpawn.png" Grid.Row="2" Grid.Column="2"/>
-        <Image Source="/Resources/blackpawn.png" Grid.Row="2" Grid.Column="3"/>
-        <Image Source="/Resources/blackpawn.png" Grid.Row="2" Grid.Column="4"/>
-        <Image Source="/Resources/blackpawn.png" Grid.Row="2" Grid.Column="5"/>
-        <Image Source="/Resources/blackpawn.png" Grid.Row="2" Grid.Column="6"/>
-        <Image Source="/Resources/blackpawn.png" Grid.Row="2" Grid.Column="7"/>
-        <Image Source="/Resources/blackpawn.png" Grid.Row="2" Grid.Column="8"/>
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="8" TextAlignment="Center" VerticalAlignment="Center"/>
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="7" TextAlignment="Center" VerticalAlignment="Center"/>
+                <TextBlock Grid.Row="3" Grid.Column="0" Text="6" TextAlignment="Center" VerticalAlignment="Center"/>
+                <TextBlock Grid.Row="4" Grid.Column="0" Text="5" TextAlignment="Center" VerticalAlignment="Center"/>
+                <TextBlock Grid.Row="5" Grid.Column="0" Text="4" TextAlignment="Center" VerticalAlignment="Center"/>
+                <TextBlock Grid.Row="6" Grid.Column="0" Text="3" TextAlignment="Center" VerticalAlignment="Center"/>
+                <TextBlock Grid.Row="7" Grid.Column="0" Text="2" TextAlignment="Center" VerticalAlignment="Center"/>
+                <TextBlock Grid.Row="8" Grid.Column="0" Text="1" TextAlignment="Center" VerticalAlignment="Center"/>
 
-        <Image Source="/Resources/whitepawn.png" Grid.Row="7" Grid.Column="1"/>
-        <Image Source="/Resources/whitepawn.png" Grid.Row="7" Grid.Column="2"/>
-        <Image Source="/Resources/whitepawn.png" Grid.Row="7" Grid.Column="3"/>
-        <Image Source="/Resources/whitepawn.png" Grid.Row="7" Grid.Column="4"/>
-        <Image Source="/Resources/whitepawn.png" Grid.Row="7" Grid.Column="5"/>
-        <Image Source="/Resources/whitepawn.png" Grid.Row="7" Grid.Column="6"/>
-        <Image Source="/Resources/whitepawn.png" Grid.Row="7" Grid.Column="7"/>
-        <Image Source="/Resources/whitepawn.png" Grid.Row="7" Grid.Column="8"/>
+                <TextBlock Grid.Row="0" Grid.Column="1" Text="a" TextAlignment="Center"/>
+                <TextBlock Grid.Row="0" Grid.Column="2" Text="b" TextAlignment="Center"/>
+                <TextBlock Grid.Row="0" Grid.Column="3" Text="c" TextAlignment="Center"/>
+                <TextBlock Grid.Row="0" Grid.Column="4" Text="d" TextAlignment="Center"/>
+                <TextBlock Grid.Row="0" Grid.Column="5" Text="e" TextAlignment="Center"/>
+                <TextBlock Grid.Row="0" Grid.Column="6" Text="f" TextAlignment="Center"/>
+                <TextBlock Grid.Row="0" Grid.Column="7" Text="g" TextAlignment="Center"/>
+                <TextBlock Grid.Row="0" Grid.Column="8" Text="h" TextAlignment="Center"/>
 
-        <Image Source="/Resources/blackrook.png" Grid.Row="1" Grid.Column="1"/>
-        <Image Source="/Resources/blackknightl.png" Grid.Row="1" Grid.Column="2"/>
-        <Image Source="/Resources/blackbishopl.png" Grid.Row="1" Grid.Column="3"/>
-        <Image Source="/Resources/blackqueen.png" Grid.Row="1" Grid.Column="4"/>
-        <Image Source="/Resources/blackking.png" Grid.Row="1" Grid.Column="5"/>
-        <Image Source="/Resources/blackbishopr.png" Grid.Row="1" Grid.Column="6"/>
-        <Image Source="/Resources/blackknightr.png" Grid.Row="1" Grid.Column="7"/>
-        <Image Source="/Resources/blackrook.png" Grid.Row="1" Grid.Column="8"/>
+                <Image Source="/Resources/blackpawn.png" Grid.Row="2" Grid.Column="1"/>
+                <Image Source="/Resources/blackpawn.png" Grid.Row="2" Grid.Column="2"/>
+                <Image Source="/Resources/blackpawn.png" Grid.Row="2" Grid.Column="3"/>
+                <Image Source="/Resources/blackpawn.png" Grid.Row="2" Grid.Column="4"/>
+                <Image Source="/Resources/blackpawn.png" Grid.Row="2" Grid.Column="5"/>
+                <Image Source="/Resources/blackpawn.png" Grid.Row="2" Grid.Column="6"/>
+                <Image Source="/Resources/blackpawn.png" Grid.Row="2" Grid.Column="7"/>
+                <Image Source="/Resources/blackpawn.png" Grid.Row="2" Grid.Column="8"/>
 
-        <Image Source="/Resources/whiterook.png" Grid.Row="8" Grid.Column="1"/>
-        <Image Source="/Resources/whiteknightl.png" Grid.Row="8" Grid.Column="2"/>
-        <Image Source="/Resources/whitebishopl.png" Grid.Row="8" Grid.Column="3"/>
-        <Image Source="/Resources/whitequeen.png" Grid.Row="8" Grid.Column="4"/>
-        <Image Source="/Resources/whiteking.png" Grid.Row="8" Grid.Column="5"/>
-        <Image Source="/Resources/whitebishopr.png" Grid.Row="8" Grid.Column="6"/>
-        <Image Source="/Resources/whiteknightr.png" Grid.Row="8" Grid.Column="7"/>
-        <Image Source="/Resources/whiterook.png" Grid.Row="8" Grid.Column="8"/>
-        
+                <Image Source="/Resources/whitepawn.png" Grid.Row="7" Grid.Column="1"/>
+                <Image Source="/Resources/whitepawn.png" Grid.Row="7" Grid.Column="2"/>
+                <Image Source="/Resources/whitepawn.png" Grid.Row="7" Grid.Column="3"/>
+                <Image Source="/Resources/whitepawn.png" Grid.Row="7" Grid.Column="4"/>
+                <Image Source="/Resources/whitepawn.png" Grid.Row="7" Grid.Column="5"/>
+                <Image Source="/Resources/whitepawn.png" Grid.Row="7" Grid.Column="6"/>
+                <Image Source="/Resources/whitepawn.png" Grid.Row="7" Grid.Column="7"/>
+                <Image Source="/Resources/whitepawn.png" Grid.Row="7" Grid.Column="8"/>
 
+                <Image Source="/Resources/blackrook.png" Grid.Row="1" Grid.Column="1"/>
+                <Image Source="/Resources/blackknightl.png" Grid.Row="1" Grid.Column="2"/>
+                <Image Source="/Resources/blackbishopl.png" Grid.Row="1" Grid.Column="3"/>
+                <Image Source="/Resources/blackqueen.png" Grid.Row="1" Grid.Column="4"/>
+                <Image Source="/Resources/blackking.png" Grid.Row="1" Grid.Column="5"/>
+                <Image Source="/Resources/blackbishopr.png" Grid.Row="1" Grid.Column="6"/>
+                <Image Source="/Resources/blackknightr.png" Grid.Row="1" Grid.Column="7"/>
+                <Image Source="/Resources/blackrook.png" Grid.Row="1" Grid.Column="8"/>
+
+                <Image Source="/Resources/whiterook.png" Grid.Row="8" Grid.Column="1"/>
+                <Image Source="/Resources/whiteknightl.png" Grid.Row="8" Grid.Column="2"/>
+                <Image Source="/Resources/whitebishopl.png" Grid.Row="8" Grid.Column="3"/>
+                <Image Source="/Resources/whitequeen.png" Grid.Row="8" Grid.Column="4"/>
+                <Image Source="/Resources/whiteking.png" Grid.Row="8" Grid.Column="5"/>
+                <Image Source="/Resources/whitebishopr.png" Grid.Row="8" Grid.Column="6"/>
+                <Image Source="/Resources/whiteknightr.png" Grid.Row="8" Grid.Column="7"/>
+                <Image Source="/Resources/whiterook.png" Grid.Row="8" Grid.Column="8"/>
+            </Grid>
+
+            <!-- Game Info Panel -->
+            <Border Grid.Column="1" BorderBrush="Gray" BorderThickness="1" Margin="0,10,10,10">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0" Text="Game Information" FontWeight="Bold" Margin="10,10,0,5"/>
+                    
+                    <StackPanel Grid.Row="1" Margin="10">
+                        <TextBlock Text="Current Player:" FontWeight="Bold"/>
+                        <TextBlock x:Name="CurrentPlayerText" Text="White" Margin="0,0,0,10"/>
+                        <TextBlock Text="Game Status:" FontWeight="Bold"/>
+                        <TextBlock x:Name="GameStatusText" Text="In Progress" Margin="0,0,0,10"/>
+                    </StackPanel>
+
+                    <GroupBox Grid.Row="2" Header="Move History" Margin="10">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <TextBlock x:Name="MoveHistoryText" TextWrapping="Wrap"/>
+                        </ScrollViewer>
+                    </GroupBox>
+
+                    <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10">
+                        <Button Content="Resign" Width="80" Margin="0,0,10,10" Click="Resign_Click"/>
+                        <Button Content="New Game" Width="80" Margin="0,0,10,10" Click="NewGame_Click"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- Status Bar -->
+        <StatusBar Grid.Row="2">
+            <StatusBarItem>
+                <TextBlock x:Name="StatusText" Text="Welcome to TrubChess! White's turn to move."/>
+            </StatusBarItem>
+        </StatusBar>
     </Grid>
 </Window>

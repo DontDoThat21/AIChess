@@ -55,6 +55,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Dialogs\PawnPromotionDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -62,6 +65,51 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="C:/Users/Ty/source/repos/DontDoThat21/TrubChess/TrubChess/AI/\ChessEngine.cs">
+      <Link>ChessEngine.cs</Link>
+    </Compile>
+    <Compile Include="C:/Users/Ty/source/repos/DontDoThat21/TrubChess/TrubChess/AI/\MoveEvaluator.cs">
+      <Link>MoveEvaluator.cs</Link>
+    </Compile>
+    <Compile Include="C:/Users/Ty/source/repos/DontDoThat21/TrubChess/TrubChess/Models/Pieces/\Bishop.cs">
+      <Link>Bishop.cs</Link>
+    </Compile>
+    <Compile Include="C:/Users/Ty/source/repos/DontDoThat21/TrubChess/TrubChess/Models/Pieces/\King.cs">
+      <Link>King.cs</Link>
+    </Compile>
+    <Compile Include="C:/Users/Ty/source/repos/DontDoThat21/TrubChess/TrubChess/Models/Pieces/\Knight.cs">
+      <Link>Knight.cs</Link>
+    </Compile>
+    <Compile Include="C:/Users/Ty/source/repos/DontDoThat21/TrubChess/TrubChess/Models/Pieces/\Pawn.cs">
+      <Link>Pawn.cs</Link>
+    </Compile>
+    <Compile Include="C:/Users/Ty/source/repos/DontDoThat21/TrubChess/TrubChess/Models/Pieces/\Queen.cs">
+      <Link>Queen.cs</Link>
+    </Compile>
+    <Compile Include="C:/Users/Ty/source/repos/DontDoThat21/TrubChess/TrubChess/Models/Pieces/\Rook.cs">
+      <Link>Rook.cs</Link>
+    </Compile>
+    <Compile Include="C:/Users/Ty/source/repos/DontDoThat21/TrubChess/TrubChess/Models/\ChessBoard.cs">
+      <Link>ChessBoard.cs</Link>
+    </Compile>
+    <Compile Include="C:/Users/Ty/source/repos/DontDoThat21/TrubChess/TrubChess/Models/\ChessPiece.cs">
+      <Link>ChessPiece.cs</Link>
+    </Compile>
+    <Compile Include="C:/Users/Ty/source/repos/DontDoThat21/TrubChess/TrubChess/Models/\GameState.cs">
+      <Link>GameState.cs</Link>
+    </Compile>
+    <Compile Include="C:/Users/Ty/source/repos/DontDoThat21/TrubChess/TrubChess/Players/\AIPlayer.cs">
+      <Link>AIPlayer.cs</Link>
+    </Compile>
+    <Compile Include="C:/Users/Ty/source/repos/DontDoThat21/TrubChess/TrubChess/Players/\HumanPlayer.cs">
+      <Link>HumanPlayer.cs</Link>
+    </Compile>
+    <Compile Include="C:/Users/Ty/source/repos/DontDoThat21/TrubChess/TrubChess/Players/\Player.cs">
+      <Link>Player.cs</Link>
+    </Compile>
+    <Compile Include="Dialogs\PawnPromotionDialog.xaml.cs">
+      <DependentUpon>PawnPromotionDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
