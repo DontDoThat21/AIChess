@@ -490,25 +490,77 @@ namespace TrubChess
 
         private void AIEasy_Click(object sender, RoutedEventArgs e)
         {
-            _aiDifficulty = AIPlayer.Difficulty.Easy;
-            
-            AIEasyMenuItem.IsChecked = true;
-            AIMediumMenuItem.IsChecked = false;
-            AIHardMenuItem.IsChecked = false;
-
-            if (_isGameActive && _blackPlayer is AIPlayer)
-            {
-                ((AIPlayer)_blackPlayer).SetDifficulty(_aiDifficulty);
-            }
+            SetAIDifficulty(AIPlayer.Difficulty.Easy);
         }
 
         private void AIMedium_Click(object sender, RoutedEventArgs e)
         {
-            _aiDifficulty = AIPlayer.Difficulty.Medium;
+            SetAIDifficulty(AIPlayer.Difficulty.Medium);
+        }
+
+        private void AIHard_Click(object sender, RoutedEventArgs e)
+        {
+            SetAIDifficulty(AIPlayer.Difficulty.Hard);
+        }
+
+        private void AIReactive_Click(object sender, RoutedEventArgs e)
+        {
+            if (CheckGitHubTokenForAdvancedAI())
+            {
+                SetAIDifficulty(AIPlayer.Difficulty.Reactive);
+            }
+        }
+
+        private void AIAverage_Click(object sender, RoutedEventArgs e)
+        {
+            if (CheckGitHubTokenForAdvancedAI())
+            {
+                SetAIDifficulty(AIPlayer.Difficulty.Average);
+            }
+        }
+
+        private void AIWorldChampion_Click(object sender, RoutedEventArgs e)
+        {
+            if (CheckGitHubTokenForAdvancedAI())
+            {
+                SetAIDifficulty(AIPlayer.Difficulty.WorldChampion);
+            }
+        }
+
+        private void SetAIDifficulty(AIPlayer.Difficulty difficulty)
+        {
+            _aiDifficulty = difficulty;
             
+            // Uncheck all difficulty menu items
             AIEasyMenuItem.IsChecked = false;
-            AIMediumMenuItem.IsChecked = true;
+            AIMediumMenuItem.IsChecked = false;
             AIHardMenuItem.IsChecked = false;
+            AIReactiveMenuItem.IsChecked = false;
+            AIAverageMenuItem.IsChecked = false;
+            AIWorldChampionMenuItem.IsChecked = false;
+
+            // Check the selected difficulty
+            switch (difficulty)
+            {
+                case AIPlayer.Difficulty.Easy:
+                    AIEasyMenuItem.IsChecked = true;
+                    break;
+                case AIPlayer.Difficulty.Medium:
+                    AIMediumMenuItem.IsChecked = true;
+                    break;
+                case AIPlayer.Difficulty.Hard:
+                    AIHardMenuItem.IsChecked = true;
+                    break;
+                case AIPlayer.Difficulty.Reactive:
+                    AIReactiveMenuItem.IsChecked = true;
+                    break;
+                case AIPlayer.Difficulty.Average:
+                    AIAverageMenuItem.IsChecked = true;
+                    break;
+                case AIPlayer.Difficulty.WorldChampion:
+                    AIWorldChampionMenuItem.IsChecked = true;
+                    break;
+            }
 
             if (_isGameActive && _blackPlayer is AIPlayer)
             {
@@ -516,18 +568,14 @@ namespace TrubChess
             }
         }
 
-        private void AIHard_Click(object sender, RoutedEventArgs e)
+        private bool CheckGitHubTokenForAdvancedAI()
         {
-            _aiDifficulty = AIPlayer.Difficulty.Hard;
-            
-            AIEasyMenuItem.IsChecked = false;
-            AIMediumMenuItem.IsChecked = false;
-            AIHardMenuItem.IsChecked = true;
-
-            if (_isGameActive && _blackPlayer is AIPlayer)
+            if (!Services.GitHubTokenManager.HasGitHubToken())
             {
-                ((AIPlayer)_blackPlayer).SetDifficulty(_aiDifficulty);
+                Services.GitHubTokenManager.PromptForTokenSetup();
+                return false;
             }
+            return true;
         }
 
         private void Resign_Click(object sender, RoutedEventArgs e)
