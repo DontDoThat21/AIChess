@@ -28,6 +28,10 @@
                     <MenuItem Header="Easy" Click="AIEasy_Click" IsCheckable="True" IsChecked="True" Name="AIEasyMenuItem"/>
                     <MenuItem Header="Medium" Click="AIMedium_Click" IsCheckable="True" Name="AIMediumMenuItem"/>
                     <MenuItem Header="Hard" Click="AIHard_Click" IsCheckable="True" Name="AIHardMenuItem"/>
+                    <Separator/>
+                    <MenuItem Header="Reactive" Click="AIReactive_Click" IsCheckable="True" Name="AIReactiveMenuItem"/>
+                    <MenuItem Header="Average" Click="AIAverage_Click" IsCheckable="True" Name="AIAverageMenuItem"/>
+                    <MenuItem Header="World Champion" Click="AIWorldChampion_Click" IsCheckable="True" Name="AIWorldChampionMenuItem"/>
                 </MenuItem>
             </MenuItem>
         </Menu>
