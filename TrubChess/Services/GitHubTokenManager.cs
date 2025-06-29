@@ -37,10 +37,10 @@ namespace TrubChess.Services
                     OpenEnvironmentVariables();
                     return true;
                 }
-                catch (Exception ex)
+                catch (System.ComponentModel.Win32Exception ex)
                 {
                     MessageBox.Show(
-                        "Failed to open System Environment Variables: " + ex.Message + "\n\n" +
+                        "Failed to open System Environment Variables due to a system error: " + ex.Message + "\n\n" +
                         "Please manually set the environment variable:\n" +
                         "Variable Name: " + GITHUB_TOKEN_ENV_VAR + "\n" +
                         "Variable Value: Your GitHub access token",
