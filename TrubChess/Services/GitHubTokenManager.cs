@@ -18,18 +18,15 @@ namespace TrubChess.Services
             return !string.IsNullOrWhiteSpace(GetGitHubToken());
         }
 
-        public static bool PromptForTokenSetup()
+        public static bool PromptForTokenSetup(Func<string, string, MessageBoxResult> showMessageBox, Action<string> showErrorMessage)
         {
-            var result = MessageBox.Show(
-                "No GitHub access token found in environment variables.\n\n" +
-                "To enable advanced AI difficulty options (Reactive, Average, World Champion), " +
-                "you need to set a GitHub access token in your environment variables.\n\n" +
-                "Would you like to open System Environment Variables to set the token?\n\n" +
-                "Environment variable name: " + GITHUB_TOKEN_ENV_VAR,
-                "GitHub Access Token Required",
-                MessageBoxButton.YesNo,
-                MessageBoxImage.Question);
+            var message = "No GitHub access token found in environment variables.\n\n" +
+                          "To enable advanced AI difficulty options (Reactive, Average, World Champion), " +
+                          "you need to set a GitHub access token in your environment variables.\n\n" +
+                          "Would you like to open System Environment Variables to set the token?\n\n" +
+                          "Environment variable name: " + GITHUB_TOKEN_ENV_VAR;
 
+            var result = showMessageBox(message, "GitHub Access Token Required");
             if (result == MessageBoxResult.Yes)
             {
                 try
