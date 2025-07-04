@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{4D7D440A-F95E-4B23-80DE-B6ECD39299BA}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>TrubChess</RootNamespace>
-    <AssemblyName>TrubChess</AssemblyName>
+    <RootNamespace>AIChess</RootNamespace>
+    <AssemblyName>AIChess</AssemblyName>
     <TargetFrameworkVersion>v4.8.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -56,6 +56,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Page Include="Dialogs\PawnPromotionDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\SettingsDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="MainWindow.xaml">
@@ -110,6 +113,9 @@
     </Compile>
     <Compile Include="Dialogs\PawnPromotionDialog.xaml.cs">
       <DependentUpon>PawnPromotionDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\SettingsDialog.xaml.cs">
+      <DependentUpon>SettingsDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Services\GitHubTokenManager.cs" />
     <Compile Include="MainWindow.xaml.cs">

@@ -2,7 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Windows;
 
-namespace TrubChess.Services
+namespace AIChess.Services
 {
     public static class GitHubTokenManager
     {
@@ -23,7 +23,7 @@ namespace TrubChess.Services
             var message = "No GitHub access token found in environment variables.\n\n" +
                           "To enable advanced AI difficulty options (Reactive, Average, World Champion), " +
                           "you need to set a GitHub access token in your environment variables.\n\n" +
-                          "Would you like to open System Environment Variables to set the token?\n\n" +
+                          "Would you like to open the Settings dialog to configure it?\n\n" +
                           "Environment variable name: " + GITHUB_TOKEN_ENV_VAR;
 
             var result = showMessageBox(message, "GitHub Access Token Required");
@@ -31,13 +31,26 @@ namespace TrubChess.Services
             {
                 try
                 {
-                    OpenEnvironmentVariables();
-                    return true;
+                    // Try to open the settings dialog if available
+                    var mainWindow = Application.Current.MainWindow as MainWindow;
+                    if (mainWindow != null)
+                    {
+                        var settingsDialog = new Dialogs.SettingsDialog();
+                        settingsDialog.Owner = mainWindow;
+                        settingsDialog.ShowDialog();
+                        return true;
+                    }
+                    else
+                    {
+                        // Fallback to system environment variables
+                        OpenEnvironmentVariables();
+                        return true;
+                    }
                 }
-                catch (System.ComponentModel.Win32Exception ex)
+                catch (Exception ex)
                 {
                     MessageBox.Show(
-                        "Failed to open System Environment Variables due to a system error: " + ex.Message + "\n\n" +
+                        "Failed to open settings dialog: " + ex.Message + "\n\n" +
                         "Please manually set the environment variable:\n" +
                         "Variable Name: " + GITHUB_TOKEN_ENV_VAR + "\n" +
                         "Variable Value: Your GitHub access token",

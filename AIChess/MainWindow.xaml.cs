@@ -7,14 +7,14 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using TrubChess.Models;
-using TrubChess.Players;
-using TrubChess.AI;
-using TrubChess.Models.Pieces;
+using AIChess.Models;
+using AIChess.Players;
+using AIChess.AI;
+using AIChess.Models.Pieces;
 using System.Windows.Media.Animation;
 using System.Windows.Documents;
 
-namespace TrubChess
+namespace AIChess
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -38,6 +38,7 @@ namespace TrubChess
             _highlightedMoves = new List<Border>();
             _aiDifficulty = AIPlayer.Difficulty.Easy;
             InitializeBoard();
+            UpdateAIDifficultyMenuAvailability();
             SetupNewGame();
         }
 
@@ -95,12 +96,13 @@ namespace TrubChess
 
         private void UpdateBoardDisplay()
         {
+            // Clear all highlights first
+            ClearHighlightedMoves();
+            
             foreach (var square in _boardSquares)
             {
-                if (square.Child is Image || (square.Child is Grid grid && grid.Children.Count > 0))
-                {
-                    square.Child = null;
-                }
+                // Properly clear any child elements
+                ClearSquareContent(square);
             }
 
             for (int row = 0; row < 8; row++)
@@ -120,21 +122,31 @@ namespace TrubChess
             }
         }
 
+        private void ClearSquareContent(Border square)
+        {
+            if (square.Child is Grid grid)
+            {
+                // Clear all children from the grid first
+                grid.Children.Clear();
+            }
+            square.Child = null;
+        }
+
         private ImageSource GetPieceImage(ChessPiece piece)
         {
             string color = piece.Color == PieceColor.White ? "white" : "black";
             string pieceName = piece.GetType().Name.ToLower();
 
             if (piece is Knight && ((Knight)piece).IsLeftKnight)
-                return new BitmapImage(new Uri($"/TrubChess;component/Resources/{color}knightl.png", UriKind.Relative));
+                return new BitmapImage(new Uri($"/AIChess;component/Resources/{color}knightl.png", UriKind.Relative));
             else if (piece is Knight)
-                return new BitmapImage(new Uri($"/TrubChess;component/Resources/{color}knightr.png", UriKind.Relative));
+                return new BitmapImage(new Uri($"/AIChess;component/Resources/{color}knightr.png", UriKind.Relative));
             else if (piece is Bishop && ((Bishop)piece).IsLeftBishop)
-                return new BitmapImage(new Uri($"/TrubChess;component/Resources/{color}bishopl.png", UriKind.Relative));
+                return new BitmapImage(new Uri($"/AIChess;component/Resources/{color}bishopl.png", UriKind.Relative));
             else if (piece is Bishop)
-                return new BitmapImage(new Uri($"/TrubChess;component/Resources/{color}bishopr.png", UriKind.Relative));
+                return new BitmapImage(new Uri($"/AIChess;component/Resources/{color}bishopr.png", UriKind.Relative));
             else
-                return new BitmapImage(new Uri($"/TrubChess;component/Resources/{color}{pieceName}.png", UriKind.Relative));
+                return new BitmapImage(new Uri($"/AIChess;component/Resources/{color}{pieceName}.png", UriKind.Relative));
         }
 
         private void UpdateGameInfo()
@@ -236,31 +248,26 @@ namespace TrubChess
                     _selectedSquare.BorderThickness = new Thickness(3);
 
                     List<ChessMove> validMoves = _gameState.GetValidMovesFor(row, col);
-                    foreach (var move in validMoves)
+                    foreach (var validMove in validMoves)
                     {
-                        Border targetSquare = _boardSquares[move.ToRow, move.ToCol];
+                        Border targetSquare = _boardSquares[validMove.ToRow, validMove.ToCol];
+                        ChessPiece targetPiece = _chessBoard.GetPieceAt(validMove.ToRow, validMove.ToCol);
+                        
+                        // Don't highlight squares with own pieces - this shouldn't happen if GetValidMovesFor is working correctly
+                        // but let's add this as a safety check
+                        if (targetPiece != null && targetPiece.Color == _gameState.CurrentPlayer)
+                            continue;
+                        
                         Ellipse highlight = new Ellipse
                         {
                             Width = 20,
                             Height = 20,
-                            Fill = _chessBoard.GetPieceAt(move.ToRow, move.ToCol) != null
-                                ? new SolidColorBrush(Color.FromArgb(150, 255, 0, 0))
-                                : new SolidColorBrush(Color.FromArgb(150, 0, 255, 0))
+                            Fill = targetPiece != null
+                                ? new SolidColorBrush(Color.FromArgb(150, 255, 0, 0))  // Red for capture
+                                : new SolidColorBrush(Color.FromArgb(150, 0, 255, 0))  // Green for empty square
                         };
 
-                        if (targetSquare.Child is Image)
-                        {
-                            Grid grid = new Grid();
-                            if (!(targetSquare.Child is Grid))
-                                grid.Children.Add(targetSquare.Child);
-                            grid.Children.Add(highlight);
-                            targetSquare.Child = grid;
-                        }
-                        else
-                        {
-                            targetSquare.Child = highlight;
-                        }
-
+                        AddHighlightToSquare(targetSquare, highlight);
                         _highlightedMoves.Add(targetSquare);
                     }
                 }
@@ -280,12 +287,52 @@ namespace TrubChess
                     return;
                 }
 
+                // Check if clicking on another piece of the same color - if so, select that piece instead
+                ChessPiece clickedPiece = _chessBoard.GetPieceAt(row, col);
+                if (clickedPiece != null && clickedPiece.Color == _gameState.CurrentPlayer)
+                {
+                    // Clear previous selection
+                    _selectedSquare.BorderBrush = Brushes.Black;
+                    _selectedSquare.BorderThickness = new Thickness(0.5);
+                    ClearHighlightedMoves();
+                    
+                    // Select the new piece
+                    _selectedSquare = clickedSquare;
+                    _selectedSquare.BorderBrush = Brushes.Yellow;
+                    _selectedSquare.BorderThickness = new Thickness(3);
+
+                    List<ChessMove> validMoves = _gameState.GetValidMovesFor(row, col);
+                    foreach (var validMove in validMoves)
+                    {
+                        Border targetSquare = _boardSquares[validMove.ToRow, validMove.ToCol];
+                        ChessPiece targetPiece = _chessBoard.GetPieceAt(validMove.ToRow, validMove.ToCol);
+                        
+                        // Safety check to ensure we don't highlight own pieces
+                        if (targetPiece != null && targetPiece.Color == _gameState.CurrentPlayer)
+                            continue;
+                        
+                        Ellipse highlight = new Ellipse
+                        {
+                            Width = 20,
+                            Height = 20,
+                            Fill = targetPiece != null
+                                ? new SolidColorBrush(Color.FromArgb(150, 255, 0, 0))  // Red for capture
+                                : new SolidColorBrush(Color.FromArgb(150, 0, 255, 0))  // Green for empty square
+                        };
+
+                        AddHighlightToSquare(targetSquare, highlight);
+                        _highlightedMoves.Add(targetSquare);
+                    }
+                    return;
+                }
+
                 ChessMove move = new ChessMove(fromRow, fromCol, row, col);
                 if (_gameState.TryMakeMove(move))
                 {
                     var fromSquare = _boardSquares[fromRow, fromCol];
                     var toSquare = _boardSquares[row, col];
-                    Image pieceImage = fromSquare.Child as Image;
+                    Image pieceImage = GetSquarePieceImage(fromSquare);
+                    
                     if (pieceImage != null)
                     {
                         AnimatePieceMove(fromSquare, toSquare, pieceImage, () =>
@@ -354,6 +401,55 @@ namespace TrubChess
             }
         }
 
+        private void AddHighlightToSquare(Border targetSquare, Ellipse highlight)
+        {
+            if (targetSquare.Child is Image existingImage)
+            {
+                // Create a new grid to hold both the image and highlight
+                Grid grid = new Grid();
+                
+                // Remove the image from its current parent first
+                targetSquare.Child = null;
+                
+                // Add both elements to the grid
+                grid.Children.Add(existingImage);
+                grid.Children.Add(highlight);
+                
+                // Set the grid as the new child
+                targetSquare.Child = grid;
+            }
+            else if (targetSquare.Child is Grid existingGrid)
+            {
+                // If it's already a grid, just add the highlight
+                existingGrid.Children.Add(highlight);
+            }
+            else
+            {
+                // If no existing content, just add the highlight directly
+                targetSquare.Child = highlight;
+            }
+        }
+
+        private Image GetSquarePieceImage(Border square)
+        {
+            if (square.Child is Image image)
+            {
+                return image;
+            }
+            else if (square.Child is Grid grid)
+            {
+                // Look for an Image in the grid's children
+                foreach (UIElement child in grid.Children)
+                {
+                    if (child is Image gridImage)
+                    {
+                        return gridImage;
+                    }
+                }
+            }
+            return null;
+        }
+
         private void HandlePawnPromotionIfNeeded(int row, int col)
         {
             ChessPiece piece = _chessBoard.GetPieceAt(row, col);
@@ -380,19 +476,25 @@ namespace TrubChess
             {
                 if (square.Child is Grid grid)
                 {
-                    UIElement imageElement = null;
+                    Image preservedImage = null;
+                    
+                    // Find and preserve any Image element
                     foreach (UIElement element in grid.Children)
                     {
-                        if (element is Image)
+                        if (element is Image image)
                         {
-                            imageElement = element;
+                            preservedImage = image;
                             break;
                         }
                     }
 
-                    if (imageElement != null)
+                    // Clear all children from the grid
+                    grid.Children.Clear();
+
+                    // If we found an image, set it as the direct child of the square
+                    if (preservedImage != null)
                     {
-                        square.Child = imageElement;
+                        square.Child = preservedImage;
                     }
                     else
                     {
@@ -401,6 +503,7 @@ namespace TrubChess
                 }
                 else if (square.Child is Ellipse)
                 {
+                    // Remove standalone highlights
                     square.Child = null;
                 }
             }
@@ -572,10 +675,23 @@ namespace TrubChess
         {
             if (!Services.GitHubTokenManager.HasGitHubToken())
             {
-                Services.GitHubTokenManager.PromptForTokenSetup();
+                Services.GitHubTokenManager.PromptForTokenSetup(
+                    (msg, caption) => MessageBox.Show(msg, caption, MessageBoxButton.YesNo, MessageBoxImage.Information),
+                    errMsg => MessageBox.Show(errMsg, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                );
+                UpdateAIDifficultyMenuAvailability();
                 return false;
             }
+            UpdateAIDifficultyMenuAvailability();
             return true;
+        }
+
+        private void UpdateAIDifficultyMenuAvailability()
+        {
+            bool hasToken = AIChess.Services.GitHubTokenManager.HasGitHubToken();
+            if (AIReactiveMenuItem != null) AIReactiveMenuItem.IsEnabled = hasToken;
+            if (AIAverageMenuItem != null) AIAverageMenuItem.IsEnabled = hasToken;
+            if (AIWorldChampionMenuItem != null) AIWorldChampionMenuItem.IsEnabled = hasToken;
         }
 
         private void Resign_Click(object sender, RoutedEventArgs e)
@@ -600,6 +716,21 @@ namespace TrubChess
             else
             {
                 MoveHistoryText.Text += $"{playerColor} resigns\n";
+            }
+        }
+
+        private void Settings_Click(object sender, RoutedEventArgs e)
+        {
+            var settingsDialog = new Dialogs.SettingsDialog();
+            settingsDialog.Owner = this;
+            
+            if (settingsDialog.ShowDialog() == true)
+            {
+                // If token was updated, refresh the AI difficulty menu availability
+                if (settingsDialog.TokenUpdated)
+                {
+                    UpdateAIDifficultyMenuAvailability();
+                }
             }
         }
     }

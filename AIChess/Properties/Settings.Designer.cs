@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace TrubChess.Properties
+namespace AIChess.Properties
 {
 
 

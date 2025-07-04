@@ -1,11 +1,11 @@
-﻿<Window x:Class="TrubChess.MainWindow"
+﻿<Window x:Class="AIChess.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:TrubChess"
+        xmlns:local="clr-namespace:AIChess"
         mc:Ignorable="d"
-        Title="TrubChess" Height="700" Width="900">
+        Title="AIChess" Height="700" Width="900">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -33,6 +33,8 @@
                     <MenuItem Header="Average" Click="AIAverage_Click" IsCheckable="True" Name="AIAverageMenuItem"/>
                     <MenuItem Header="World Champion" Click="AIWorldChampion_Click" IsCheckable="True" Name="AIWorldChampionMenuItem"/>
                 </MenuItem>
+                <Separator/>
+                <MenuItem Header="Settings..." Click="Settings_Click"/>
             </MenuItem>
         </Menu>
 
@@ -159,7 +161,7 @@
         <!-- Status Bar -->
         <StatusBar Grid.Row="2">
             <StatusBarItem>
-                <TextBlock x:Name="StatusText" Text="Welcome to TrubChess! White's turn to move."/>
+                <TextBlock x:Name="StatusText" Text="Welcome to AIChess! White's turn to move."/>
             </StatusBarItem>
         </StatusBar>
     </Grid>

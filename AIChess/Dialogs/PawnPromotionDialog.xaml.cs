@@ -1,6 +1,6 @@
 using System.Windows;
 
-namespace TrubChess.Dialogs
+namespace AIChess.Dialogs
 {
     public partial class PawnPromotionDialog : Window
     {
