@@ -38,6 +38,7 @@ namespace AIChess
             _highlightedMoves = new List<Border>();
             _aiDifficulty = AIPlayer.Difficulty.Easy;
             InitializeBoard();
+            LoadAndApplyStartupColors();
             UpdateAIDifficultyMenuAvailability();
             SetupNewGame();
         }
@@ -78,7 +79,7 @@ namespace AIChess
             if (PlayerVsPlayerMenuItem.IsChecked)
                 _blackPlayer = new HumanPlayer(PieceColor.Black);
             else
-                _blackPlayer = new AIPlayer(PieceColor.Black, _aiDifficulty);
+                _blackPlayer = new AIPlayerExtended(PieceColor.Black, (AIPlayerExtended.Difficulty)_aiDifficulty);
 
             UpdateBoardDisplay();
             UpdateGameInfo();
@@ -361,7 +362,7 @@ namespace AIChess
                             {
                                 MakeAIMove(aiPlayer);
                             }
-                            else if (_isGameActive && _gameState.CurrentPlayer == PieceColor.White && _whitePlayer is AIPlayer whiteAIPlayer)
+                            else if (_isGameActive && _gameState.CurrentPlayer == PieceColor.White && _whitePlayer is AIPlayerExtended whiteAIPlayer)
                             {
                                 MakeAIMove(whiteAIPlayer);
                             }
@@ -390,7 +391,7 @@ namespace AIChess
                         {
                             MakeAIMove(aiPlayer);
                         }
-                        else if (_isGameActive && _gameState.CurrentPlayer == PieceColor.White && _whitePlayer is AIPlayer whiteAIPlayer)
+                        else if (_isGameActive && _gameState.CurrentPlayer == PieceColor.White && _whitePlayer is AIPlayerExtended whiteAIPlayer)
                         {
                             MakeAIMove(whiteAIPlayer);
                         }
@@ -515,7 +516,7 @@ namespace AIChess
             _highlightedMoves.Clear();
         }
 
-        private void MakeAIMove(AIPlayer aiPlayer)
+        private void MakeAIMove(AIPlayerExtended aiPlayer)
         {
             StatusText.Text = "AI is thinking...";
 
@@ -589,11 +590,11 @@ namespace AIChess
             if (_isGameActive)
             {
                 _whitePlayer = new HumanPlayer(PieceColor.White);
-                _blackPlayer = new AIPlayer(PieceColor.Black, _aiDifficulty);
+                _blackPlayer = new AIPlayerExtended(PieceColor.Black, (AIPlayerExtended.Difficulty)_aiDifficulty);
 
                 if (_gameState.CurrentPlayer == PieceColor.Black)
                 {
-                    MakeAIMove((AIPlayer)_blackPlayer);
+                    MakeAIMove((AIPlayerExtended)_blackPlayer);
                 }
             }
         }
@@ -672,9 +673,9 @@ namespace AIChess
                     break;
             }
 
-            if (_isGameActive && _blackPlayer is AIPlayer)
+            if (_isGameActive && _blackPlayer is AIPlayerExtended)
             {
-                ((AIPlayer)_blackPlayer).SetDifficulty(_aiDifficulty);
+                ((AIPlayerExtended)_blackPlayer).SetDifficulty((AIPlayerExtended.Difficulty)_aiDifficulty);
             }
         }
 
@@ -699,6 +700,68 @@ namespace AIChess
             if (AIReactiveMenuItem != null) AIReactiveMenuItem.IsEnabled = hasToken;
             if (AIAverageMenuItem != null) AIAverageMenuItem.IsEnabled = hasToken;
             if (AIWorldChampionMenuItem != null) AIWorldChampionMenuItem.IsEnabled = hasToken;
+        }
+
+        private void LoadAndApplyStartupColors()
+        {
+            // Load colors using the same method as SettingsDialog
+            var lightSquareColor = LoadColorFromSettings("LightSquareColor", Colors.Beige);
+            var darkSquareColor = LoadColorFromSettings("DarkSquareColor", Colors.SaddleBrown);
+            
+            // Apply the loaded colors to the board
+            for (int row = 0; row < 8; row++)
+            {
+                for (int col = 0; col < 8; col++)
+                {
+                    Border square = _boardSquares[row, col];
+                    bool isLightSquare = (row + col) % 2 == 0;
+                    
+                    square.Background = isLightSquare 
+                        ? new SolidColorBrush(lightSquareColor)
+                        : new SolidColorBrush(darkSquareColor);
+                }
+            }
+        }
+
+        private Color LoadColorFromSettings(string key, Color defaultColor)
+        {
+            try
+            {
+                using (var key_reg = Microsoft.Win32.Registry.CurrentUser.CreateSubKey(@"SOFTWARE\AIChess\Colors"))
+                {
+                    string colorString = key_reg?.GetValue(key) as string;
+                    if (!string.IsNullOrEmpty(colorString))
+                    {
+                        return (Color)ColorConverter.ConvertFromString(colorString);
+                    }
+                }
+            }
+            catch
+            {
+                // If loading fails, use default
+            }
+            return defaultColor;
+        }
+
+        private void ApplyColorSettings(Dialogs.SettingsDialog settingsDialog)
+        {
+            // Update chess board square colors
+            for (int row = 0; row < 8; row++)
+            {
+                for (int col = 0; col < 8; col++)
+                {
+                    Border square = _boardSquares[row, col];
+                    bool isLightSquare = (row + col) % 2 == 0;
+                    
+                    square.Background = isLightSquare 
+                        ? new SolidColorBrush(settingsDialog.LightSquareColor)
+                        : new SolidColorBrush(settingsDialog.DarkSquareColor);
+                }
+            }
+
+            // TODO: Apply player colors when displaying player names or highlighting pieces
+            // For now, the player colors are stored and can be used for future UI enhancements
+            // such as coloring player names, move highlights, or status indicators
         }
 
         private void Resign_Click(object sender, RoutedEventArgs e)
@@ -737,6 +800,12 @@ namespace AIChess
                 if (settingsDialog.TokenUpdated)
                 {
                     UpdateAIDifficultyMenuAvailability();
+                }
+                
+                // If colors were updated, apply them to the board
+                if (settingsDialog.ColorsUpdated)
+                {
+                    ApplyColorSettings(settingsDialog);
                 }
             }
         }
