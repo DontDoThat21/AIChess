@@ -320,18 +320,12 @@ namespace AIChess.Dialogs
 
         private Color? ShowColorDialog(Color currentColor)
         {
-            // Since WPF doesn't have a built-in color picker, we'll create a simple one
-            // or use a third-party solution. For now, let's create a basic color selection
-            var colorDialog = new System.Windows.Forms.ColorDialog();
-            colorDialog.Color = System.Drawing.Color.FromArgb(currentColor.A, currentColor.R, currentColor.G, currentColor.B);
-            colorDialog.FullOpen = true;
-            
-            if (colorDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            var dlg = new ColorPickerDialog(currentColor) { Owner = this };
+            var result = dlg.ShowDialog();
+            if (result == true)
             {
-                var selectedColor = colorDialog.Color;
-                return Color.FromArgb(selectedColor.A, selectedColor.R, selectedColor.G, selectedColor.B);
+                return dlg.SelectedColor;
             }
-            
             return null;
         }
     }

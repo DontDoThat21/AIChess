@@ -38,7 +38,6 @@ namespace AIChess
             _highlightedMoves = new List<Border>();
             _aiDifficulty = AIPlayer.Difficulty.Easy;
             InitializeBoard();
-            LoadAndApplyStartupColors();
             UpdateAIDifficultyMenuAvailability();
             SetupNewGame();
         }
@@ -79,11 +78,10 @@ namespace AIChess
             if (PlayerVsPlayerMenuItem.IsChecked)
                 _blackPlayer = new HumanPlayer(PieceColor.Black);
             else
-                _blackPlayer = new AIPlayerExtended(PieceColor.Black, (AIPlayerExtended.Difficulty)_aiDifficulty);
+                _blackPlayer = new AIPlayer(PieceColor.Black, _aiDifficulty);
 
             UpdateBoardDisplay();
             UpdateGameInfo();
-            UpdateScoreAndCaptured();
 
             _selectedSquare = null;
             ClearHighlightedMoves();
@@ -177,8 +175,6 @@ namespace AIChess
                 GameStatusText.Text = "In Progress";
                 StatusText.Text = $"{(_gameState.CurrentPlayer == PieceColor.White ? "White" : "Black")} to move.";
             }
-
-            UpdateScoreAndCaptured();
         }
 
         private void AnimatePieceMove(Border fromSquare, Border toSquare, Image pieceImage, Action onComplete)
@@ -362,7 +358,7 @@ namespace AIChess
                             {
                                 MakeAIMove(aiPlayer);
                             }
-                            else if (_isGameActive && _gameState.CurrentPlayer == PieceColor.White && _whitePlayer is AIPlayerExtended whiteAIPlayer)
+                            else if (_isGameActive && _gameState.CurrentPlayer == PieceColor.White && _whitePlayer is AIPlayer whiteAIPlayer)
                             {
                                 MakeAIMove(whiteAIPlayer);
                             }
@@ -391,7 +387,7 @@ namespace AIChess
                         {
                             MakeAIMove(aiPlayer);
                         }
-                        else if (_isGameActive && _gameState.CurrentPlayer == PieceColor.White && _whitePlayer is AIPlayerExtended whiteAIPlayer)
+                        else if (_isGameActive && _gameState.CurrentPlayer == PieceColor.White && _whitePlayer is AIPlayer whiteAIPlayer)
                         {
                             MakeAIMove(whiteAIPlayer);
                         }
@@ -469,7 +465,6 @@ namespace AIChess
                         var newPiece = dialog.SelectedPiece;
                         _chessBoard.PromotePawn(row, col, newPiece, pawn.Color);
                         UpdateBoardDisplay();
-                        UpdateScoreAndCaptured();
                     }
                 }
             }
@@ -516,7 +511,7 @@ namespace AIChess
             _highlightedMoves.Clear();
         }
 
-        private void MakeAIMove(AIPlayerExtended aiPlayer)
+        private void MakeAIMove(AIPlayer aiPlayer)
         {
             StatusText.Text = "AI is thinking...";
 
@@ -590,11 +585,11 @@ namespace AIChess
             if (_isGameActive)
             {
                 _whitePlayer = new HumanPlayer(PieceColor.White);
-                _blackPlayer = new AIPlayerExtended(PieceColor.Black, (AIPlayerExtended.Difficulty)_aiDifficulty);
+                _blackPlayer = new AIPlayer(PieceColor.Black, _aiDifficulty);
 
                 if (_gameState.CurrentPlayer == PieceColor.Black)
                 {
-                    MakeAIMove((AIPlayerExtended)_blackPlayer);
+                    MakeAIMove((AIPlayer)_blackPlayer);
                 }
             }
         }
@@ -673,9 +668,9 @@ namespace AIChess
                     break;
             }
 
-            if (_isGameActive && _blackPlayer is AIPlayerExtended)
+            if (_isGameActive && _blackPlayer is AIPlayer)
             {
-                ((AIPlayerExtended)_blackPlayer).SetDifficulty((AIPlayerExtended.Difficulty)_aiDifficulty);
+                ((AIPlayer)_blackPlayer).SetDifficulty(_aiDifficulty);
             }
         }
 
@@ -700,68 +695,6 @@ namespace AIChess
             if (AIReactiveMenuItem != null) AIReactiveMenuItem.IsEnabled = hasToken;
             if (AIAverageMenuItem != null) AIAverageMenuItem.IsEnabled = hasToken;
             if (AIWorldChampionMenuItem != null) AIWorldChampionMenuItem.IsEnabled = hasToken;
-        }
-
-        private void LoadAndApplyStartupColors()
-        {
-            // Load colors using the same method as SettingsDialog
-            var lightSquareColor = LoadColorFromSettings("LightSquareColor", Colors.Beige);
-            var darkSquareColor = LoadColorFromSettings("DarkSquareColor", Colors.SaddleBrown);
-            
-            // Apply the loaded colors to the board
-            for (int row = 0; row < 8; row++)
-            {
-                for (int col = 0; col < 8; col++)
-                {
-                    Border square = _boardSquares[row, col];
-                    bool isLightSquare = (row + col) % 2 == 0;
-                    
-                    square.Background = isLightSquare 
-                        ? new SolidColorBrush(lightSquareColor)
-                        : new SolidColorBrush(darkSquareColor);
-                }
-            }
-        }
-
-        private Color LoadColorFromSettings(string key, Color defaultColor)
-        {
-            try
-            {
-                using (var key_reg = Microsoft.Win32.Registry.CurrentUser.CreateSubKey(@"SOFTWARE\AIChess\Colors"))
-                {
-                    string colorString = key_reg?.GetValue(key) as string;
-                    if (!string.IsNullOrEmpty(colorString))
-                    {
-                        return (Color)ColorConverter.ConvertFromString(colorString);
-                    }
-                }
-            }
-            catch
-            {
-                // If loading fails, use default
-            }
-            return defaultColor;
-        }
-
-        private void ApplyColorSettings(Dialogs.SettingsDialog settingsDialog)
-        {
-            // Update chess board square colors
-            for (int row = 0; row < 8; row++)
-            {
-                for (int col = 0; col < 8; col++)
-                {
-                    Border square = _boardSquares[row, col];
-                    bool isLightSquare = (row + col) % 2 == 0;
-                    
-                    square.Background = isLightSquare 
-                        ? new SolidColorBrush(settingsDialog.LightSquareColor)
-                        : new SolidColorBrush(settingsDialog.DarkSquareColor);
-                }
-            }
-
-            // TODO: Apply player colors when displaying player names or highlighting pieces
-            // For now, the player colors are stored and can be used for future UI enhancements
-            // such as coloring player names, move highlights, or status indicators
         }
 
         private void Resign_Click(object sender, RoutedEventArgs e)
@@ -801,60 +734,7 @@ namespace AIChess
                 {
                     UpdateAIDifficultyMenuAvailability();
                 }
-                
-                // If colors were updated, apply them to the board
-                if (settingsDialog.ColorsUpdated)
-                {
-                    ApplyColorSettings(settingsDialog);
-                }
             }
-        }
-
-        private void UpdateScoreAndCaptured()
-        {
-            if (_gameState == null) return;
-
-            // Use the authoritative GameState board to compute material
-            var whitePieces = _gameState.Board.GetPieces(PieceColor.White);
-            var blackPieces = _gameState.Board.GetPieces(PieceColor.Black);
-
-            int whiteMaterial = whitePieces.Sum(p => p.GetValue());
-            int blackMaterial = blackPieces.Sum(p => p.GetValue());
-            int diff = whiteMaterial - blackMaterial;
-
-            string advantage = diff == 0 ? "Even" : (diff > 0 ? $"White +{diff}" : $"Black +{-diff}");
-            ScoreText.Text = $"White {whiteMaterial} - Black {blackMaterial} ({advantage})";
-
-            // Update captured pieces panels
-            CapturedByWhitePanel.Children.Clear();
-            CapturedByBlackPanel.Children.Clear();
-
-            if (_gameState.CapturedByWhite != null)
-            {
-                foreach (var cap in _gameState.CapturedByWhite)
-                {
-                    CapturedByWhitePanel.Children.Add(CreateSmallPieceImage(cap));
-                }
-            }
-            if (_gameState.CapturedByBlack != null)
-            {
-                foreach (var cap in _gameState.CapturedByBlack)
-                {
-                    CapturedByBlackPanel.Children.Add(CreateSmallPieceImage(cap));
-                }
-            }
-        }
-
-        private Image CreateSmallPieceImage(ChessPiece piece)
-        {
-            var img = new Image
-            {
-                Source = GetPieceImage(piece),
-                Width = 24,
-                Height = 24,
-                Margin = new Thickness(2)
-            };
-            return img;
         }
     }
 }
