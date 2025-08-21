@@ -522,6 +522,9 @@ namespace AIChess
                 // Execute the move
                 if (move != null && _gameState.TryMakeMove(move))
                 {
+                    // Keep UI board model in sync with GameState board
+                    _chessBoard.MovePiece(move.FromRow, move.FromCol, move.ToRow, move.ToCol);
+
                     // Update UI
                     UpdateBoardDisplay();
                     UpdateGameInfo();
