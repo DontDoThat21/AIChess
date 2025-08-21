@@ -1,7 +1,7 @@
 <Window x:Class="AIChess.Dialogs.SettingsDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Settings" Height="470" Width="500" WindowStartupLocation="CenterOwner" ResizeMode="NoResize">
+        Title="Settings" Height="550" Width="500" WindowStartupLocation="CenterOwner" ResizeMode="NoResize">
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -11,6 +11,91 @@
 
         <!-- Tab Control -->
         <TabControl Grid.Row="0" Grid.RowSpan="2" Name="SettingsTabControl">
+            <TabItem Header="Appearance">
+                <Grid Margin="15">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Player Colors Section -->
+                    <GroupBox Grid.Row="0" Header="Player Colors" Margin="0,0,0,15">
+                        <StackPanel Margin="10">
+                            <!-- Player 1 Color -->
+                            <Grid Margin="0,5">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="120"/>
+                                    <ColumnDefinition Width="100"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="Player 1:" VerticalAlignment="Center"/>
+                                <Rectangle Grid.Column="1" Name="Player1ColorPreview" Width="80" Height="25" Stroke="Black" StrokeThickness="1" Fill="Blue" Margin="0,0,10,0"/>
+                                <Button Grid.Column="2" Name="Player1ColorButton" Content="Change Color" Width="100" HorizontalAlignment="Left" Click="Player1Color_Click"/>
+                            </Grid>
+
+                            <!-- Player 2 Color -->
+                            <Grid Margin="0,5">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="120"/>
+                                    <ColumnDefinition Width="100"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="Player 2:" VerticalAlignment="Center"/>
+                                <Rectangle Grid.Column="1" Name="Player2ColorPreview" Width="80" Height="25" Stroke="Black" StrokeThickness="1" Fill="Red" Margin="0,0,10,0"/>
+                                <Button Grid.Column="2" Name="Player2ColorButton" Content="Change Color" Width="100" HorizontalAlignment="Left" Click="Player2Color_Click"/>
+                            </Grid>
+
+                            <!-- AI Color -->
+                            <Grid Margin="0,5">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="120"/>
+                                    <ColumnDefinition Width="100"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="AI Player:" VerticalAlignment="Center"/>
+                                <Rectangle Grid.Column="1" Name="AIColorPreview" Width="80" Height="25" Stroke="Black" StrokeThickness="1" Fill="Green" Margin="0,0,10,0"/>
+                                <Button Grid.Column="2" Name="AIColorButton" Content="Change Color" Width="100" HorizontalAlignment="Left" Click="AIColor_Click"/>
+                            </Grid>
+                        </StackPanel>
+                    </GroupBox>
+
+                    <!-- Chess Board Colors Section -->
+                    <GroupBox Grid.Row="1" Header="Chess Board Colors" Margin="0,0,0,15">
+                        <StackPanel Margin="10">
+                            <!-- Light Squares -->
+                            <Grid Margin="0,5">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="120"/>
+                                    <ColumnDefinition Width="100"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="Light Squares:" VerticalAlignment="Center"/>
+                                <Rectangle Grid.Column="1" Name="LightSquareColorPreview" Width="80" Height="25" Stroke="Black" StrokeThickness="1" Fill="White" Margin="0,0,10,0"/>
+                                <Button Grid.Column="2" Name="LightSquareColorButton" Content="Change Color" Width="100" HorizontalAlignment="Left" Click="LightSquareColor_Click"/>
+                            </Grid>
+
+                            <!-- Dark Squares -->
+                            <Grid Margin="0,5">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="120"/>
+                                    <ColumnDefinition Width="100"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="Dark Squares:" VerticalAlignment="Center"/>
+                                <Rectangle Grid.Column="1" Name="DarkSquareColorPreview" Width="80" Height="25" Stroke="Black" StrokeThickness="1" Fill="SaddleBrown" Margin="0,0,10,0"/>
+                                <Button Grid.Column="2" Name="DarkSquareColorButton" Content="Change Color" Width="100" HorizontalAlignment="Left" Click="DarkSquareColor_Click"/>
+                            </Grid>
+                        </StackPanel>
+                    </GroupBox>
+
+                    <!-- Reset Button -->
+                    <Button Grid.Row="2" Name="ResetColorsButton" Content="Reset to Default Colors" Width="150" HorizontalAlignment="Left" Margin="0,10,0,0" Click="ResetColors_Click"/>
+                </Grid>
+            </TabItem>
+            
             <TabItem Header="AI Configuration">
                 <Grid Margin="15">
                     <Grid.RowDefinitions>
@@ -18,11 +103,16 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
+                    <!-- GitHub Token Section -->
                     <TextBlock Grid.Row="0" Text="GitHub Personal Access Token" FontWeight="Bold" Margin="0,0,0,5"/>
-                    <TextBlock Grid.Row="1" Text="Required for advanced AI difficulty levels (Reactive, Average, World Champion)" 
+                    <TextBlock Grid.Row="1" Text="Required for advanced AI difficulty levels (Reactive, Average)" 
                                TextWrapping="Wrap" Margin="0,0,0,10" Foreground="Gray"/>
 
                     <Grid Grid.Row="2" Margin="0,0,0,10">
@@ -37,17 +127,41 @@
                         <Button Grid.Column="2" Name="TestTokenButton" Content="Test" Width="60" Margin="10,0,0,0" Click="TestToken_Click"/>
                     </Grid>
 
-                    <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="0,0,0,10">
+                    <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="0,0,0,15">
                         <Button Name="SetEnvironmentVariableButton" Content="Set Environment Variable" Width="150" Margin="0,0,10,0" Click="SetEnvironmentVariable_Click"/>
                         <Button Name="OpenEnvVarsButton" Content="Open System Environment Variables" Width="200" Click="OpenEnvVars_Click"/>
                     </StackPanel>
 
-                    <GroupBox Grid.Row="4" Header="Instructions" Margin="0,10,0,0">
+                    <!-- OpenAI API Key Section -->
+                    <TextBlock Grid.Row="4" Text="OpenAI API Key" FontWeight="Bold" Margin="0,0,0,5"/>
+                    <TextBlock Grid.Row="5" Text="Required for World Champion difficulty level (uses OpenAI for chess moves)" 
+                               TextWrapping="Wrap" Margin="0,0,0,10" Foreground="Gray"/>
+
+                    <Grid Grid.Row="6" Margin="0,0,0,10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Column="0" Text="API Key:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                        <PasswordBox Grid.Column="1" Name="OpenAIKeyPasswordBox" VerticalAlignment="Center"/>
+                        <Button Grid.Column="2" Name="TestOpenAIKeyButton" Content="Test" Width="60" Margin="10,0,0,0" Click="TestOpenAIKey_Click"/>
+                    </Grid>
+
+                    <StackPanel Grid.Row="7" Orientation="Horizontal" Margin="0,0,0,15">
+                        <Button Name="SetOpenAIEnvironmentVariableButton" Content="Set Environment Variable" Width="150" Margin="0,0,10,0" Click="SetOpenAIEnvironmentVariable_Click"/>
+                    </StackPanel>
+
+                    <GroupBox Grid.Row="8" Header="Instructions" Margin="0,10,0,0">
                         <ScrollViewer VerticalScrollBarVisibility="Auto">
                             <TextBlock TextWrapping="Wrap" Margin="5">
-                                <Run Text="To use advanced AI difficulty levels, you need to provide a GitHub Personal Access Token:"/>
+                                <Run Text="To use advanced AI difficulty levels:"/>
                                 <LineBreak/><LineBreak/>
-                                <Run Text="1. Go to GitHub.com ? Settings ? Developer settings ? Personal access tokens"/>
+                                
+                                <Run Text="GitHub Personal Access Token (for Reactive/Average AI):"/>
+                                <LineBreak/>
+                                <Run Text="1. Go to GitHub.com → Settings → Developer settings → Personal access tokens"/>
                                 <LineBreak/>
                                 <Run Text="2. Click 'Generate new token (classic)'"/>
                                 <LineBreak/>
@@ -55,9 +169,21 @@
                                 <LineBreak/>
                                 <Run Text="4. Copy the generated token and paste it above"/>
                                 <LineBreak/>
-                                <Run Text="5. Click 'Set Environment Variable' to save it permanently"/>
+                                <Run Text="5. Click 'Set Environment Variable' to save as GITHUB_ACCESS_TOKEN"/>
                                 <LineBreak/><LineBreak/>
-                                <Run Text="The token will be stored as the GITHUB_ACCESS_TOKEN environment variable."/>
+                                
+                                <Run Text="OpenAI API Key (for World Champion AI):"/>
+                                <LineBreak/>
+                                <Run Text="1. Go to platform.openai.com → API keys"/>
+                                <LineBreak/>
+                                <Run Text="2. Create a new API key"/>
+                                <LineBreak/>
+                                <Run Text="3. Copy the API key and paste it above"/>
+                                <LineBreak/>
+                                <Run Text="4. Click 'Set Environment Variable' to save as OPENAI_API_KEY"/>
+                                <LineBreak/><LineBreak/>
+                                
+                                <Run Text="Note: World Champion difficulty uses OpenAI's GPT-4 to analyze chess positions and play at grandmaster level."/>
                             </TextBlock>
                         </ScrollViewer>
                     </GroupBox>
