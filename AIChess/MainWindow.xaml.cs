@@ -82,6 +82,7 @@ namespace AIChess
 
             UpdateBoardDisplay();
             UpdateGameInfo();
+            UpdateScoreAndCaptured();
 
             _selectedSquare = null;
             ClearHighlightedMoves();
@@ -175,6 +176,8 @@ namespace AIChess
                 GameStatusText.Text = "In Progress";
                 StatusText.Text = $"{(_gameState.CurrentPlayer == PieceColor.White ? "White" : "Black")} to move.";
             }
+
+            UpdateScoreAndCaptured();
         }
 
         private void AnimatePieceMove(Border fromSquare, Border toSquare, Image pieceImage, Action onComplete)
@@ -465,6 +468,7 @@ namespace AIChess
                         var newPiece = dialog.SelectedPiece;
                         _chessBoard.PromotePawn(row, col, newPiece, pawn.Color);
                         UpdateBoardDisplay();
+                        UpdateScoreAndCaptured();
                     }
                 }
             }
@@ -735,6 +739,53 @@ namespace AIChess
                     UpdateAIDifficultyMenuAvailability();
                 }
             }
+        }
+
+        private void UpdateScoreAndCaptured()
+        {
+            if (_gameState == null) return;
+
+            // Use the authoritative GameState board to compute material
+            var whitePieces = _gameState.Board.GetPieces(PieceColor.White);
+            var blackPieces = _gameState.Board.GetPieces(PieceColor.Black);
+
+            int whiteMaterial = whitePieces.Sum(p => p.GetValue());
+            int blackMaterial = blackPieces.Sum(p => p.GetValue());
+            int diff = whiteMaterial - blackMaterial;
+
+            string advantage = diff == 0 ? "Even" : (diff > 0 ? $"White +{diff}" : $"Black +{-diff}");
+            ScoreText.Text = $"White {whiteMaterial} - Black {blackMaterial} ({advantage})";
+
+            // Update captured pieces panels
+            CapturedByWhitePanel.Children.Clear();
+            CapturedByBlackPanel.Children.Clear();
+
+            if (_gameState.CapturedByWhite != null)
+            {
+                foreach (var cap in _gameState.CapturedByWhite)
+                {
+                    CapturedByWhitePanel.Children.Add(CreateSmallPieceImage(cap));
+                }
+            }
+            if (_gameState.CapturedByBlack != null)
+            {
+                foreach (var cap in _gameState.CapturedByBlack)
+                {
+                    CapturedByBlackPanel.Children.Add(CreateSmallPieceImage(cap));
+                }
+            }
+        }
+
+        private Image CreateSmallPieceImage(ChessPiece piece)
+        {
+            var img = new Image
+            {
+                Source = GetPieceImage(piece),
+                Width = 24,
+                Height = 24,
+                Margin = new Thickness(2)
+            };
+            return img;
         }
     }
 }

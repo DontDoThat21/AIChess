@@ -142,6 +142,16 @@
                         <TextBlock x:Name="CurrentPlayerText" Text="White" Margin="0,0,0,10"/>
                         <TextBlock Text="Game Status:" FontWeight="Bold"/>
                         <TextBlock x:Name="GameStatusText" Text="In Progress" Margin="0,0,0,10"/>
+
+                        <!-- Score -->
+                        <TextBlock Text="Score:" FontWeight="Bold"/>
+                        <TextBlock x:Name="ScoreText" Text="White 0 - Black 0 (Even)" Margin="0,0,0,10"/>
+
+                        <!-- Captured Pieces -->
+                        <TextBlock Text="Captured by White:" FontWeight="Bold"/>
+                        <WrapPanel x:Name="CapturedByWhitePanel" Margin="0,2,0,8"/>
+                        <TextBlock Text="Captured by Black:" FontWeight="Bold"/>
+                        <WrapPanel x:Name="CapturedByBlackPanel" Margin="0,2,0,8"/>
                     </StackPanel>
 
                     <GroupBox Grid.Row="2" Header="Move History" Margin="10">
