@@ -1,6 +1,6 @@
 using System;
 using System.IO;
-using Microsoft.Data.Sqlite;
+using System.Data.SQLite;
 
 namespace AIChess.Services
 {
@@ -20,12 +20,12 @@ namespace AIChess.Services
             }
 
             _databasePath = Path.Combine(aiChessPath, "AIChess.db");
-            _connectionString = $"Data Source={_databasePath}";
+            _connectionString = $"Data Source={_databasePath};Version=3;";
         }
 
-        public SqliteConnection GetConnection()
+        public SQLiteConnection GetConnection()
         {
-            return new SqliteConnection(_connectionString);
+            return new SQLiteConnection(_connectionString);
         }
 
         public void InitializeDatabase()
@@ -57,12 +57,12 @@ namespace AIChess.Services
                         LastUpdated DATETIME DEFAULT CURRENT_TIMESTAMP
                     )";
 
-                using (var command = new SqliteCommand(createGameHistoryTable, connection))
+                using (var command = new SQLiteCommand(createGameHistoryTable, connection))
                 {
                     command.ExecuteNonQuery();
                 }
 
-                using (var command = new SqliteCommand(createGameStatsTable, connection))
+                using (var command = new SQLiteCommand(createGameStatsTable, connection))
                 {
                     command.ExecuteNonQuery();
                 }
