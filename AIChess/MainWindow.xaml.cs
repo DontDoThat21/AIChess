@@ -13,6 +13,7 @@ using AIChess.AI;
 using AIChess.Models.Pieces;
 using System.Windows.Media.Animation;
 using System.Windows.Documents;
+using Microsoft.Win32; // Added for loading colors from settings
 
 namespace AIChess
 {
@@ -31,12 +32,18 @@ namespace AIChess
         private bool _isGameActive;
         private AIPlayer.Difficulty _aiDifficulty;
 
+        // Player color settings
+        private Color _player1Color = Colors.Blue;
+        private Color _player2Color = Colors.Red;
+        private Color _aiColor = Colors.Green;
+
         public MainWindow()
         {
             InitializeComponent();
             _boardSquares = new Border[8, 8];
             _highlightedMoves = new List<Border>();
             _aiDifficulty = AIPlayer.Difficulty.Easy;
+            LoadPlayerColorsFromSettings();
             InitializeBoard();
             UpdateAIDifficultyMenuAvailability();
             SetupNewGame();
@@ -44,13 +51,19 @@ namespace AIChess
 
         private void InitializeBoard()
         {
+            // Load square colors from settings (fall back to current defaults)
+            Color lightColor = LoadColorFromSettings("LightSquareColor", Colors.Beige);
+            Color darkColor = LoadColorFromSettings("DarkSquareColor", Colors.SaddleBrown);
+            var lightBrush = new SolidColorBrush(lightColor);
+            var darkBrush = new SolidColorBrush(darkColor);
+
             // Create the checkerboard pattern
             for (int row = 0; row < 8; row++)
             {
                 for (int col = 0; col < 8; col++)
                 {
                     Border square = new Border();
-                    square.Background = (row + col) % 2 == 0 ? Brushes.Beige : Brushes.SaddleBrown;
+                    square.Background = (row + col) % 2 == 0 ? lightBrush : darkBrush;
                     square.BorderBrush = Brushes.Black;
                     square.BorderThickness = new Thickness(0.5);
 
@@ -65,6 +78,51 @@ namespace AIChess
                     _boardSquares[row, col] = square;
                 }
             }
+        }
+
+        private void ApplyBoardColors()
+        {
+            Color lightColor = LoadColorFromSettings("LightSquareColor", Colors.Beige);
+            Color darkColor = LoadColorFromSettings("DarkSquareColor", Colors.SaddleBrown);
+            var lightBrush = new SolidColorBrush(lightColor);
+            var darkBrush = new SolidColorBrush(darkColor);
+
+            for (int row = 0; row < 8; row++)
+            {
+                for (int col = 0; col < 8; col++)
+                {
+                    var square = _boardSquares[row, col];
+                    if (square == null) continue;
+                    square.Background = (row + col) % 2 == 0 ? lightBrush : darkBrush;
+                }
+            }
+        }
+
+        private void LoadPlayerColorsFromSettings()
+        {
+            _player1Color = LoadColorFromSettings("Player1Color", Colors.Blue);
+            _player2Color = LoadColorFromSettings("Player2Color", Colors.Red);
+            _aiColor = LoadColorFromSettings("AIColor", Colors.Green);
+        }
+
+        private Color LoadColorFromSettings(string key, Color fallback)
+        {
+            try
+            {
+                using (var keyReg = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\\AIChess\\Colors"))
+                {
+                    string colorString = keyReg?.GetValue(key) as string;
+                    if (!string.IsNullOrEmpty(colorString))
+                    {
+                        return (Color)ColorConverter.ConvertFromString(colorString);
+                    }
+                }
+            }
+            catch
+            {
+                // ignore and use fallback
+            }
+            return fallback;
         }
 
         private void SetupNewGame()
@@ -96,6 +154,9 @@ namespace AIChess
 
         private void UpdateBoardDisplay()
         {
+            // Reload player colors in case they changed
+            LoadPlayerColorsFromSettings();
+
             // Clear all highlights first
             ClearHighlightedMoves();
             
@@ -113,7 +174,11 @@ namespace AIChess
                     if (piece != null)
                     {
                         Image pieceImage = new Image();
-                        pieceImage.Source = GetPieceImage(piece);
+                        // Always use the white asset as a base so tint colors are vivid
+                        var baseSource = GetPieceImageBaseWhite(piece);
+                        var tintColor = GetTintForPiece(piece.Color);
+                        var tinted = TintImage(baseSource, tintColor);
+                        pieceImage.Source = tinted;
                         pieceImage.Stretch = Stretch.Uniform;
 
                         _boardSquares[row, col].Child = pieceImage;
@@ -132,21 +197,74 @@ namespace AIChess
             square.Child = null;
         }
 
-        private ImageSource GetPieceImage(ChessPiece piece)
+        private ImageSource GetPieceImageBaseWhite(ChessPiece piece)
         {
-            string color = piece.Color == PieceColor.White ? "white" : "black";
             string pieceName = piece.GetType().Name.ToLower();
 
             if (piece is Knight && ((Knight)piece).IsLeftKnight)
-                return new BitmapImage(new Uri($"/AIChess;component/Resources/{color}knightl.png", UriKind.Relative));
+                return new BitmapImage(new Uri($"/AIChess;component/Resources/whiteknightl.png", UriKind.Relative));
             else if (piece is Knight)
-                return new BitmapImage(new Uri($"/AIChess;component/Resources/{color}knightr.png", UriKind.Relative));
+                return new BitmapImage(new Uri($"/AIChess;component/Resources/whiteknightr.png", UriKind.Relative));
             else if (piece is Bishop && ((Bishop)piece).IsLeftBishop)
-                return new BitmapImage(new Uri($"/AIChess;component/Resources/{color}bishopl.png", UriKind.Relative));
+                return new BitmapImage(new Uri($"/AIChess;component/Resources/whitebishopl.png", UriKind.Relative));
             else if (piece is Bishop)
-                return new BitmapImage(new Uri($"/AIChess;component/Resources/{color}bishopr.png", UriKind.Relative));
+                return new BitmapImage(new Uri($"/AIChess;component/Resources/whitebishopr.png", UriKind.Relative));
             else
-                return new BitmapImage(new Uri($"/AIChess;component/Resources/{color}{pieceName}.png", UriKind.Relative));
+                return new BitmapImage(new Uri($"/AIChess;component/Resources/white{pieceName}.png", UriKind.Relative));
+        }
+
+        private Color GetTintForPiece(PieceColor pieceColor)
+        {
+            if (pieceColor == PieceColor.White)
+            {
+                // White pieces: if controlled by AI, use AI color; else Player 1
+                if (_whitePlayer is AIPlayer) return _aiColor;
+                return _player1Color;
+            }
+            else
+            {
+                // Black pieces: if controlled by AI, use AI color; else Player 2
+                if (_blackPlayer is AIPlayer) return _aiColor;
+                return _player2Color;
+            }
+        }
+
+        private ImageSource TintImage(ImageSource source, Color tint)
+        {
+            var bitmapSource = source as BitmapSource;
+            if (bitmapSource == null)
+                return source;
+
+            // Ensure format is BGRA32 for easy manipulation
+            var converted = new FormatConvertedBitmap(bitmapSource, PixelFormats.Bgra32, null, 0);
+
+            int width = converted.PixelWidth;
+            int height = converted.PixelHeight;
+            int stride = width * 4;
+            byte[] pixels = new byte[height * stride];
+            converted.CopyPixels(pixels, stride, 0);
+
+            for (int i = 0; i < pixels.Length; i += 4)
+            {
+                byte b = pixels[i + 0];
+                byte g = pixels[i + 1];
+                byte r = pixels[i + 2];
+                byte a = pixels[i + 3];
+                if (a == 0) continue; // transparent pixel
+
+                // Compute brightness from the base (white) asset
+                double brightness = Math.Max(r, Math.Max(g, b)) / 255.0; // 0..1
+
+                pixels[i + 0] = (byte)(tint.B * brightness);
+                pixels[i + 1] = (byte)(tint.G * brightness);
+                pixels[i + 2] = (byte)(tint.R * brightness);
+                // preserve alpha
+            }
+
+            var writable = new WriteableBitmap(width, height, converted.DpiX, converted.DpiY, PixelFormats.Bgra32, null);
+            writable.WritePixels(new Int32Rect(0, 0, width, height), pixels, stride, 0);
+            writable.Freeze();
+            return writable;
         }
 
         private void UpdateGameInfo()
@@ -573,6 +691,7 @@ namespace AIChess
             {
                 _whitePlayer = new HumanPlayer(PieceColor.White);
                 _blackPlayer = new HumanPlayer(PieceColor.Black);
+                UpdateBoardDisplay();
             }
         }
 
@@ -586,6 +705,7 @@ namespace AIChess
             {
                 _whitePlayer = new HumanPlayer(PieceColor.White);
                 _blackPlayer = new AIPlayer(PieceColor.Black, _aiDifficulty);
+                UpdateBoardDisplay();
 
                 if (_gameState.CurrentPlayer == PieceColor.Black)
                 {
@@ -733,6 +853,14 @@ namespace AIChess
                 if (settingsDialog.TokenUpdated)
                 {
                     UpdateAIDifficultyMenuAvailability();
+                }
+
+                // If colors were updated, refresh board and piece colors
+                if (settingsDialog.ColorsUpdated)
+                {
+                    LoadPlayerColorsFromSettings();
+                    ApplyBoardColors();
+                    UpdateBoardDisplay();
                 }
             }
         }
