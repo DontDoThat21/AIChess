@@ -14,6 +14,7 @@ using AIChess.Models.Pieces;
 using System.Windows.Media.Animation;
 using System.Windows.Documents;
 using Microsoft.Win32; // Added for loading colors from settings
+using AIChess.Services;
 
 namespace AIChess
 {
@@ -36,6 +37,13 @@ namespace AIChess
         private Color _player1Color = Colors.Blue;
         private Color _player2Color = Colors.Red;
         private Color _aiColor = Colors.Green;
+        
+        // Rook-specific color settings
+        private Color _rookPlayer1Color = Colors.Blue;
+        private Color _rookPlayer2Color = Colors.Red;
+        private Color _rookAIColor = Colors.Green;
+        
+        private DatabaseService _databaseService;
 
         public MainWindow()
         {
@@ -43,6 +51,8 @@ namespace AIChess
             _boardSquares = new Border[8, 8];
             _highlightedMoves = new List<Border>();
             _aiDifficulty = AIPlayer.Difficulty.Easy;
+            _databaseService = new DatabaseService();
+            _databaseService.InitializeDatabase();
             LoadPlayerColorsFromSettings();
             InitializeBoard();
             UpdateAIDifficultyMenuAvailability();
@@ -103,6 +113,11 @@ namespace AIChess
             _player1Color = LoadColorFromSettings("Player1Color", Colors.Blue);
             _player2Color = LoadColorFromSettings("Player2Color", Colors.Red);
             _aiColor = LoadColorFromSettings("AIColor", Colors.Green);
+            
+            // Load rook-specific colors from database with fallback to player colors
+            _rookPlayer1Color = LoadColorFromDatabase("RookPlayer1Color", _player1Color);
+            _rookPlayer2Color = LoadColorFromDatabase("RookPlayer2Color", _player2Color);
+            _rookAIColor = LoadColorFromDatabase("RookAIColor", _aiColor);
         }
 
         private Color LoadColorFromSettings(string key, Color fallback)
@@ -116,6 +131,23 @@ namespace AIChess
                     {
                         return (Color)ColorConverter.ConvertFromString(colorString);
                     }
+                }
+            }
+            catch
+            {
+                // ignore and use fallback
+            }
+            return fallback;
+        }
+
+        private Color LoadColorFromDatabase(string key, Color fallback)
+        {
+            try
+            {
+                string colorString = _databaseService.LoadColorSetting(key);
+                if (!string.IsNullOrEmpty(colorString))
+                {
+                    return (Color)ColorConverter.ConvertFromString(colorString);
                 }
             }
             catch
@@ -176,7 +208,7 @@ namespace AIChess
                         Image pieceImage = new Image();
                         // Always use the white asset as a base so tint colors are vivid
                         var baseSource = GetPieceImageBaseWhite(piece);
-                        var tintColor = GetTintForPiece(piece.Color);
+                        var tintColor = GetTintForPiece(piece);
                         var tinted = TintImage(baseSource, tintColor);
                         pieceImage.Source = tinted;
                         pieceImage.Stretch = Stretch.Uniform;
@@ -213,9 +245,27 @@ namespace AIChess
                 return new BitmapImage(new Uri($"/AIChess;component/Resources/white{pieceName}.png", UriKind.Relative));
         }
 
-        private Color GetTintForPiece(PieceColor pieceColor)
+        private Color GetTintForPiece(ChessPiece piece)
         {
-            if (pieceColor == PieceColor.White)
+            // Check if this is a rook piece and use rook-specific colors
+            if (piece is Rook)
+            {
+                if (piece.Color == PieceColor.White)
+                {
+                    // White rook: if controlled by AI, use rook AI color; else rook Player 1 color
+                    if (_whitePlayer is AIPlayer) return _rookAIColor;
+                    return _rookPlayer1Color;
+                }
+                else
+                {
+                    // Black rook: if controlled by AI, use rook AI color; else rook Player 2 color
+                    if (_blackPlayer is AIPlayer) return _rookAIColor;
+                    return _rookPlayer2Color;
+                }
+            }
+            
+            // For all other pieces, use the standard player colors
+            if (piece.Color == PieceColor.White)
             {
                 // White pieces: if controlled by AI, use AI color; else Player 1
                 if (_whitePlayer is AIPlayer) return _aiColor;

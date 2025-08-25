@@ -91,8 +91,49 @@
                         </StackPanel>
                     </GroupBox>
 
+                    <!-- Rook Piece Colors Section -->
+                    <GroupBox Grid.Row="2" Header="Rook Piece Colors" Margin="0,0,0,15">
+                        <StackPanel Margin="10">
+                            <!-- Rook Player 1 Color -->
+                            <Grid Margin="0,5">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="120"/>
+                                    <ColumnDefinition Width="100"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="Rook Player 1:" VerticalAlignment="Center"/>
+                                <Rectangle Grid.Column="1" Name="RookPlayer1ColorPreview" Width="80" Height="25" Stroke="Black" StrokeThickness="1" Fill="Blue" Margin="0,0,10,0"/>
+                                <Button Grid.Column="2" Name="RookPlayer1ColorButton" Content="Change Color" Width="100" HorizontalAlignment="Left" Click="RookPlayer1Color_Click"/>
+                            </Grid>
+
+                            <!-- Rook Player 2 Color -->
+                            <Grid Margin="0,5">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="120"/>
+                                    <ColumnDefinition Width="100"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="Rook Player 2:" VerticalAlignment="Center"/>
+                                <Rectangle Grid.Column="1" Name="RookPlayer2ColorPreview" Width="80" Height="25" Stroke="Black" StrokeThickness="1" Fill="Red" Margin="0,0,10,0"/>
+                                <Button Grid.Column="2" Name="RookPlayer2ColorButton" Content="Change Color" Width="100" HorizontalAlignment="Left" Click="RookPlayer2Color_Click"/>
+                            </Grid>
+
+                            <!-- Rook AI Color -->
+                            <Grid Margin="0,5">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="120"/>
+                                    <ColumnDefinition Width="100"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="Rook AI:" VerticalAlignment="Center"/>
+                                <Rectangle Grid.Column="1" Name="RookAIColorPreview" Width="80" Height="25" Stroke="Black" StrokeThickness="1" Fill="Green" Margin="0,0,10,0"/>
+                                <Button Grid.Column="2" Name="RookAIColorButton" Content="Change Color" Width="100" HorizontalAlignment="Left" Click="RookAIColor_Click"/>
+                            </Grid>
+                        </StackPanel>
+                    </GroupBox>
+
                     <!-- Reset Button -->
-                    <Button Grid.Row="2" Name="ResetColorsButton" Content="Reset to Default Colors" Width="150" HorizontalAlignment="Left" Margin="0,10,0,0" Click="ResetColors_Click"/>
+                    <Button Grid.Row="3" Name="ResetColorsButton" Content="Reset to Default Colors" Width="150" HorizontalAlignment="Left" Margin="0,10,0,0" Click="ResetColors_Click"/>
                 </Grid>
             </TabItem>
             
