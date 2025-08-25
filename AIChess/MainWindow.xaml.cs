@@ -7,10 +7,10 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using AIChess.Models;
+using TrubChess.Models;
 using AIChess.Players;
 using AIChess.AI;
-using AIChess.Models.Pieces;
+using TrubChess.Models.Pieces;
 using System.Windows.Media.Animation;
 using System.Windows.Documents;
 using Microsoft.Win32; // Added for loading colors from settings

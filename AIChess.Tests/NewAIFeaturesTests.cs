@@ -1,7 +1,9 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TrubChess.Players;
 using TrubChess.Services;
+using AIChess.Services;
 using System;
+using System.Windows.Media;
 
 namespace TrubChess.Tests
 {
@@ -56,6 +58,78 @@ namespace TrubChess.Tests
             bool hasToken = GitHubTokenManager.HasGitHubToken();
             
             Assert.IsTrue(hasToken == true || hasToken == false);
+        }
+    }
+
+    [TestClass]
+    public class RookColorCustomizationTests
+    {
+        private DatabaseService _databaseService;
+
+        [TestInitialize]
+        public void Setup()
+        {
+            _databaseService = new DatabaseService();
+            _databaseService.InitializeDatabase();
+        }
+
+        [TestMethod]
+        public void TestSaveAndLoadRookColor()
+        {
+            // Arrange
+            string colorKey = "TestRookColor";
+            string expectedColor = "#FFFF0000"; // Red color
+
+            // Act
+            _databaseService.SaveColorSetting(colorKey, expectedColor);
+            string actualColor = _databaseService.LoadColorSetting(colorKey);
+
+            // Assert
+            Assert.AreEqual(expectedColor, actualColor);
+        }
+
+        [TestMethod]
+        public void TestLoadNonexistentRookColor()
+        {
+            // Arrange
+            string nonexistentKey = "NonexistentRookColor";
+
+            // Act
+            string result = _databaseService.LoadColorSetting(nonexistentKey);
+
+            // Assert
+            Assert.IsNull(result);
+        }
+
+        [TestMethod]
+        public void TestDatabaseConnection()
+        {
+            // Act
+            bool connectionTest = _databaseService.TestConnection();
+
+            // Assert
+            Assert.IsTrue(connectionTest);
+        }
+
+        [TestMethod]
+        public void TestRookColorSettingsCanBeOverwritten()
+        {
+            // Arrange
+            string colorKey = "TestRookColorOverwrite";
+            string firstColor = "#FF0000FF"; // Blue
+            string secondColor = "#FF00FF00"; // Green
+
+            // Act
+            _databaseService.SaveColorSetting(colorKey, firstColor);
+            string firstResult = _databaseService.LoadColorSetting(colorKey);
+            
+            _databaseService.SaveColorSetting(colorKey, secondColor);
+            string secondResult = _databaseService.LoadColorSetting(colorKey);
+
+            // Assert
+            Assert.AreEqual(firstColor, firstResult);
+            Assert.AreEqual(secondColor, secondResult);
+            Assert.AreNotEqual(firstResult, secondResult);
         }
     }
 }
