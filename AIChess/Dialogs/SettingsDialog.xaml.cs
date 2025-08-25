@@ -9,6 +9,8 @@ namespace AIChess.Dialogs
 {
     public partial class SettingsDialog : Window
     {
+        private readonly DatabaseService _databaseService;
+        
         public bool TokenUpdated { get; private set; }
         public bool ColorsUpdated { get; private set; }
 
@@ -18,10 +20,17 @@ namespace AIChess.Dialogs
         public Color AIColor { get; private set; } = Colors.Green;
         public Color LightSquareColor { get; private set; } = Colors.White;
         public Color DarkSquareColor { get; private set; } = Colors.SaddleBrown;
+        
+        // Rook-specific color properties
+        public Color RookPlayer1Color { get; private set; } = Colors.Blue;
+        public Color RookPlayer2Color { get; private set; } = Colors.Red;
+        public Color RookAIColor { get; private set; } = Colors.Green;
 
         public SettingsDialog()
         {
             InitializeComponent();
+            _databaseService = new DatabaseService();
+            _databaseService.InitializeDatabase();
             LoadCurrentToken();
             LoadCurrentColors();
         }
@@ -52,6 +61,11 @@ namespace AIChess.Dialogs
             LightSquareColor = LoadColorFromSettings("LightSquareColor", Colors.White);
             DarkSquareColor = LoadColorFromSettings("DarkSquareColor", Colors.SaddleBrown);
 
+            // Load rook-specific colors from database with fallback to player colors
+            RookPlayer1Color = LoadColorFromDatabase("RookPlayer1Color", Player1Color);
+            RookPlayer2Color = LoadColorFromDatabase("RookPlayer2Color", Player2Color);
+            RookAIColor = LoadColorFromDatabase("RookAIColor", AIColor);
+
             // Update preview rectangles
             UpdateColorPreviews();
         }
@@ -78,6 +92,23 @@ namespace AIChess.Dialogs
             return defaultColor;
         }
 
+        private Color LoadColorFromDatabase(string key, Color defaultColor)
+        {
+            try
+            {
+                string colorString = _databaseService.LoadColorSetting(key);
+                if (!string.IsNullOrEmpty(colorString))
+                {
+                    return (Color)ColorConverter.ConvertFromString(colorString);
+                }
+            }
+            catch
+            {
+                // If loading fails, use default
+            }
+            return defaultColor;
+        }
+
         private void SaveColorToSettings(string key, Color color)
         {
             try
@@ -93,6 +124,18 @@ namespace AIChess.Dialogs
             }
         }
 
+        private void SaveColorToDatabase(string key, Color color)
+        {
+            try
+            {
+                _databaseService.SaveColorSetting(key, color.ToString());
+            }
+            catch
+            {
+                // Ignore save errors
+            }
+        }
+
         private void UpdateColorPreviews()
         {
             Player1ColorPreview.Fill = new SolidColorBrush(Player1Color);
@@ -100,6 +143,11 @@ namespace AIChess.Dialogs
             AIColorPreview.Fill = new SolidColorBrush(AIColor);
             LightSquareColorPreview.Fill = new SolidColorBrush(LightSquareColor);
             DarkSquareColorPreview.Fill = new SolidColorBrush(DarkSquareColor);
+            
+            // Update rook color previews
+            RookPlayer1ColorPreview.Fill = new SolidColorBrush(RookPlayer1Color);
+            RookPlayer2ColorPreview.Fill = new SolidColorBrush(RookPlayer2Color);
+            RookAIColorPreview.Fill = new SolidColorBrush(RookAIColor);
         }
 
         private void TestToken_Click(object sender, RoutedEventArgs e)
@@ -305,6 +353,11 @@ namespace AIChess.Dialogs
                 LightSquareColor = Colors.White;
                 DarkSquareColor = Colors.SaddleBrown;
 
+                // Reset rook colors to match player colors
+                RookPlayer1Color = Colors.Blue;
+                RookPlayer2Color = Colors.Red;
+                RookAIColor = Colors.Green;
+
                 UpdateColorPreviews();
 
                 // Save defaults
@@ -314,6 +367,48 @@ namespace AIChess.Dialogs
                 SaveColorToSettings("LightSquareColor", LightSquareColor);
                 SaveColorToSettings("DarkSquareColor", DarkSquareColor);
 
+                // Save rook defaults to database
+                SaveColorToDatabase("RookPlayer1Color", RookPlayer1Color);
+                SaveColorToDatabase("RookPlayer2Color", RookPlayer2Color);
+                SaveColorToDatabase("RookAIColor", RookAIColor);
+
+                ColorsUpdated = true;
+            }
+        }
+
+        // Rook color selection event handlers
+        private void RookPlayer1Color_Click(object sender, RoutedEventArgs e)
+        {
+            Color? selectedColor = ShowColorDialog(RookPlayer1Color);
+            if (selectedColor.HasValue)
+            {
+                RookPlayer1Color = selectedColor.Value;
+                RookPlayer1ColorPreview.Fill = new SolidColorBrush(RookPlayer1Color);
+                SaveColorToDatabase("RookPlayer1Color", RookPlayer1Color);
+                ColorsUpdated = true;
+            }
+        }
+
+        private void RookPlayer2Color_Click(object sender, RoutedEventArgs e)
+        {
+            Color? selectedColor = ShowColorDialog(RookPlayer2Color);
+            if (selectedColor.HasValue)
+            {
+                RookPlayer2Color = selectedColor.Value;
+                RookPlayer2ColorPreview.Fill = new SolidColorBrush(RookPlayer2Color);
+                SaveColorToDatabase("RookPlayer2Color", RookPlayer2Color);
+                ColorsUpdated = true;
+            }
+        }
+
+        private void RookAIColor_Click(object sender, RoutedEventArgs e)
+        {
+            Color? selectedColor = ShowColorDialog(RookAIColor);
+            if (selectedColor.HasValue)
+            {
+                RookAIColor = selectedColor.Value;
+                RookAIColorPreview.Fill = new SolidColorBrush(RookAIColor);
+                SaveColorToDatabase("RookAIColor", RookAIColor);
                 ColorsUpdated = true;
             }
         }

@@ -57,12 +57,25 @@ namespace AIChess.Services
                         LastUpdated DATETIME DEFAULT CURRENT_TIMESTAMP
                     )";
 
+                var createColorSettingsTable = @"
+                    CREATE TABLE IF NOT EXISTS ColorSettings (
+                        Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        SettingName TEXT NOT NULL UNIQUE,
+                        ColorValue TEXT NOT NULL,
+                        LastUpdated DATETIME DEFAULT CURRENT_TIMESTAMP
+                    )";
+
                 using (var command = new SQLiteCommand(createGameHistoryTable, connection))
                 {
                     command.ExecuteNonQuery();
                 }
 
                 using (var command = new SQLiteCommand(createGameStatsTable, connection))
+                {
+                    command.ExecuteNonQuery();
+                }
+
+                using (var command = new SQLiteCommand(createColorSettingsTable, connection))
                 {
                     command.ExecuteNonQuery();
                 }
@@ -88,6 +101,40 @@ namespace AIChess.Services
         public string GetDatabasePath()
         {
             return _databasePath;
+        }
+
+        public void SaveColorSetting(string settingName, string colorValue)
+        {
+            using (var connection = GetConnection())
+            {
+                connection.Open();
+                var sql = @"INSERT OR REPLACE INTO ColorSettings (SettingName, ColorValue, LastUpdated) 
+                           VALUES (@SettingName, @ColorValue, @LastUpdated)";
+                
+                using (var command = new SQLiteCommand(sql, connection))
+                {
+                    command.Parameters.AddWithValue("@SettingName", settingName);
+                    command.Parameters.AddWithValue("@ColorValue", colorValue);
+                    command.Parameters.AddWithValue("@LastUpdated", DateTime.Now);
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public string LoadColorSetting(string settingName)
+        {
+            using (var connection = GetConnection())
+            {
+                connection.Open();
+                var sql = "SELECT ColorValue FROM ColorSettings WHERE SettingName = @SettingName";
+                
+                using (var command = new SQLiteCommand(sql, connection))
+                {
+                    command.Parameters.AddWithValue("@SettingName", settingName);
+                    var result = command.ExecuteScalar();
+                    return result?.ToString();
+                }
+            }
         }
     }
 }
