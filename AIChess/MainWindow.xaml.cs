@@ -200,17 +200,31 @@ namespace AIChess
         private ImageSource GetPieceImageBaseWhite(ChessPiece piece)
         {
             string pieceName = piece.GetType().Name.ToLower();
+            string fileName;
 
-            if (piece is Knight && ((Knight)piece).IsLeftKnight)
-                return new BitmapImage(new Uri($"/AIChess;component/Resources/whiteknightl.png", UriKind.Relative));
+            if (piece is Knight k && k.IsLeftKnight)
+                fileName = "whiteknightl.png";
             else if (piece is Knight)
-                return new BitmapImage(new Uri($"/AIChess;component/Resources/whiteknightr.png", UriKind.Relative));
-            else if (piece is Bishop && ((Bishop)piece).IsLeftBishop)
-                return new BitmapImage(new Uri($"/AIChess;component/Resources/whitebishopl.png", UriKind.Relative));
+                fileName = "whiteknightr.png";
+            else if (piece is Bishop b && b.IsLeftBishop)
+                fileName = "whitebishopl.png";
             else if (piece is Bishop)
-                return new BitmapImage(new Uri($"/AIChess;component/Resources/whitebishopr.png", UriKind.Relative));
+                fileName = "whitebishopr.png";
             else
-                return new BitmapImage(new Uri($"/AIChess;component/Resources/white{pieceName}.png", UriKind.Relative));
+                fileName = $"white{pieceName}.png";
+
+            // Same-assembly pack URI (no ;component needed when not crossing assemblies)
+            var uri = new Uri($"pack://application:,,,/Resources/{fileName}", UriKind.Absolute);
+
+            var bitmapImage = new BitmapImage();
+            bitmapImage.BeginInit();
+            bitmapImage.UriSource = uri;
+            bitmapImage.CacheOption = BitmapCacheOption.OnLoad;   // ensure stream is closed for tinting
+            bitmapImage.CreateOptions = BitmapCreateOptions.None;
+            bitmapImage.EndInit();
+            bitmapImage.Freeze();
+
+            return bitmapImage;
         }
 
         private Color GetTintForPiece(PieceColor pieceColor)
