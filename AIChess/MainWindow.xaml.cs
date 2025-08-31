@@ -160,12 +160,20 @@ namespace AIChess
             // Clear all highlights first
             ClearHighlightedMoves();
             
-            foreach (var square in _boardSquares)
+            // Clear all squares completely first
+            for (int row = 0; row < 8; row++)
             {
-                // Properly clear any child elements
-                ClearSquareContent(square);
+                for (int col = 0; col < 8; col++)
+                {
+                    var square = _boardSquares[row, col];
+                    if (square != null)
+                    {
+                        ClearSquareContent(square);
+                    }
+                }
             }
 
+            // Now place all the pieces based on the current board state
             for (int row = 0; row < 8; row++)
             {
                 for (int col = 0; col < 8; col++)
@@ -194,6 +202,7 @@ namespace AIChess
                 // Clear all children from the grid first
                 grid.Children.Clear();
             }
+            // Always set child to null to ensure complete cleanup
             square.Child = null;
         }
 
@@ -620,12 +629,11 @@ namespace AIChess
                         }
                     }
 
-                    // Clear all children from the grid
-                    grid.Children.Clear();
-
                     // If we found an image, set it as the direct child of the square
                     if (preservedImage != null)
                     {
+                        // Remove the image from the grid first to avoid parent conflicts
+                        grid.Children.Remove(preservedImage);
                         square.Child = preservedImage;
                     }
                     else
